@@ -1,0 +1,11 @@
+[API]
+URL = 'http://api.transilien.com/gare/{departure_station}/depart/{arrival_sation}'
+DEPARTURE_SATION = 87543207
+ARRIVAL_SATION = 87547315
+USER = 'user'
+PASSWORD = 'password'
+
+[WAITING_TIME]
+DEFAULT = 10
+STEP = 10
+MAX = 30
