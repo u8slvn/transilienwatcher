@@ -8,7 +8,7 @@ from unittest.mock import patch, Mock
 import pytest
 from freezegun import freeze_time
 
-import rer_watcher
+from rerwatcher import app
 
 
 @pytest.mark.parametrize("given,expected", [
@@ -17,24 +17,24 @@ import rer_watcher
     (timedelta(seconds=120), '2min',),
 ])
 def test_timedelta_formatter(given, expected):
-    assert rer_watcher.timedelta_formatter(given) == expected
+    assert app.timedelta_formatter(given) == expected
 
 
-@patch('rer_watcher.RERWatcher')
-@patch('rer_watcher.matrix_device_builder')
-@patch('rer_watcher.RawConfigParser.read')
+@patch('rerwatcher.app.RERWatcher')
+@patch('rerwatcher.app.matrix_device_builder')
+@patch('rerwatcher.app.RawConfigParser.read')
 def test_bootstrap_should_create_an_app(rawconfigparser_mock,
                                         device_builder_mock,
-                                        rer_watcher_mock):
+                                        app_mock):
     # GIVEN
     device_builder_mock.return_value = 'FOO-DEVICE-BUILDER'
 
     # WHEN
-    rer_watcher.bootstrap()
+    app.bootstrap()
 
     # THENself.app
     expected_config = RawConfigParser()
-    rer_watcher_mock.assert_called_with(config=expected_config,
+    app_mock.assert_called_with(config=expected_config,
                                         display_device='FOO-DEVICE-BUILDER')
 
 
@@ -42,10 +42,10 @@ def test_bootstrap_should_create_an_app(rawconfigparser_mock,
 class TestRERWatcher:
     def setup(self):
         mock = Mock()
-        self.app = rer_watcher.RERWatcher(mock, mock)
+        self.app = app.RERWatcher(mock, mock)
         self.app._api_date_format = '%d/%m/%Y %H:%M'
 
-    @patch('rer_watcher.timedelta_formatter')
+    @patch('rerwatcher.app.timedelta_formatter')
     def test_timetable_formatter_should_return_str(self,
                                                    timedelta_formatter_mock):
         # GIVEN
@@ -59,7 +59,7 @@ class TestRERWatcher:
         # THEN
         assert 'FOO: 9min' == result
 
-    @patch('rer_watcher.timedelta_formatter')
+    @patch('rerwatcher.app.timedelta_formatter')
     def test_timetable_formatter_should_call_timedelta_formatter(
             self,
             timedelta_formatter_mock
