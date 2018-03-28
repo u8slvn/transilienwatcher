@@ -128,6 +128,6 @@ class TestRERWatcher:
         result_list = self.app.extract_timetables(None)
 
         # THEN
-        expected_list = ['FOO-TWO', 'FOO-ONE']
+        expected_list = ['FOO-ONE', 'FOO-TWO']
         assert result_list == expected_list
         assert len(timetable_formatter_mock.call_args_list) is 2

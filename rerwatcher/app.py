@@ -92,7 +92,6 @@ class RERWatcher:
                 date=train.find('date').text
             )
             timetables_list.append(formatted_timetables)
-        timetables_list.reverse()
 
         return timetables_list
 
