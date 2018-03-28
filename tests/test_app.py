@@ -14,7 +14,7 @@ from rerwatcher import app
 @pytest.mark.parametrize("given,expected", [
     (timedelta(seconds=40), '1min',),
     (timedelta(seconds=120), '2min',),
-    (timedelta(seconds=120), '2min',),
+    (timedelta(seconds=7400), '2h',),
 ])
 def test_timedelta_formatter(given, expected):
     assert app.timedelta_formatter(given) == expected
