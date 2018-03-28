@@ -28,6 +28,10 @@ def timedelta_formatter(time_value):
     return str
 
 
+def get_text_response_encoded(response, encoding='utf-8'):
+        return response.text.encode(encoding)
+
+
 def matrix_device_builder():
     # serial = spi(port=0, device=0, gpio=noop())
     # device = max7219(serial, width=64, height=16, block_orientation=-90, rotate=0)
@@ -51,36 +55,38 @@ def bootstrap():
 class RERWatcher:
     def __init__(self, config, display_device):
         self.is_running = False
-        self._config = config
-        self._api_date_format = self._config.get('API', 'DateFormat')
-        self._refresh_time = self._config.getint('REFRESH_TIME', 'Default')
-        self._step_refresh_time = self._config.getint('REFRESH_TIME', 'Step')
-        self._max_refresh_time = self._config.getint('REFRESH_TIME', 'Max')
+        self._api_url = config.get('API', 'Url')
+        self._api_date_format = config.get('API', 'DateFormat')
+        self._api_auth = HTTPBasicAuth(
+            username=config.get('API', 'User'),
+            password=config.get('API', 'Password')
+        )
+        self._refresh_time = config.getint('REFRESH_TIME', 'Default')
+        self._step_refresh_time = config.getint('REFRESH_TIME', 'Step')
+        self._max_refresh_time = config.getint('REFRESH_TIME', 'Max')
         self._display_device = display_device
 
     def start(self):
         self.is_running = True
 
+        # TODO - manage context error
         while self.is_running:
-            api_result = self.fetch_api()
-            timetables = self.extract_timetables(api_load=api_result)
+            api_response = self.fetch_api()
+            # TODO - check status_code == 200
+            api_load = get_text_response_encoded(response=api_response)
+            timetables = self.extract_timetables(api_load=api_load)
             self.display_timetables(timetables=timetables)
             self.manage_refresh_time()
 
     def fetch_api(self):
-        return requests.get(
-            url=self._config.get('API', 'Url'),
-            auth=HTTPBasicAuth(
-                username=self._config.get('API', 'User'),
-                password=self._config.get('API', 'Password')
-            )
-        )
+        return requests.get(url=self._api_url, auth=self._api_auth)
 
     def extract_timetables(self, api_load, limit=2):
         timetables_list = []
-        tree = etree.fromstring(api_load.text.encode('utf-8'))
+        tree = etree.fromstring(api_load)
+        trains = tree.xpath('/passages/train')
 
-        for train in tree.xpath('/passages/train')[:limit]:
+        for train in trains[:limit]:
             formatted_timetables = self.timetable_formatter(
                 miss=train.find('miss').text,
                 date=train.find('date').text
