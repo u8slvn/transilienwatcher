@@ -1,10 +1,11 @@
-[API]
-Url = 'http://api.transilien.com/gare/{departure_station}/depart/{arrival_sation}'
-User = 'user'
-Password = 'password'
-DateFormat = %d/%m/%Y %H:%M
+[api]
+url = 'http://api.transilien.com/gare/{departure_station}/depart/{arrival_sation}'
+user = user
+password = password
+date_format = %d/%m/%Y %H:%M
+encoding = utf-8
 
-[REFRESH_TIME]
-Default = 10
-Step = 10
-Max = 30
+[refresh_time]
+default = 10
+step = 10
+max = 30
