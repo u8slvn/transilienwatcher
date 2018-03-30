@@ -25,17 +25,17 @@ def test_load_config_return_data(rawconfigparser_mock):
 
 
 @patch('rerwatcher.app.RerWatcher')
-@patch('rerwatcher.app.matrix_device_builder')
+@patch('rerwatcher.app.DisplayDeviceFactory')
 @patch('rerwatcher.app.TransilienApiDriver')
 @patch('rerwatcher.app.load_config')
 def test_bootstrap_should_create_an_app(load_config_mock,
                                         api_driver_mock,
-                                        device_builder_mock,
+                                        display_device_factory_mock,
                                         app_mock):
     # GIVEN
     load_config_mock.return_value = 'FOO-CONFIG'
     api_driver_mock.return_value = 'FOO-API-DRIVER'
-    device_builder_mock.return_value = 'FOO-DEVICE-BUILDER'
+    display_device_factory_mock.build.return_value = 'FOO-DEVICE-BUILDER'
 
     # WHEN
     app.bootstrap()
@@ -146,12 +146,12 @@ class TestTransilienApiDriver:
 
 
 class TestTimeTable:
-    def test_display(self):
+    def test_text(self):
         # GIVEN
         timetable = app.TimeTable('FOO', 'BAR')
 
         # WHEN
-        message = timetable.display()
+        message = timetable.text()
 
         # THEN
         assert message == 'FOO: BAR'

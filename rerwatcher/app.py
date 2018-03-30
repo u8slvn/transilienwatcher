@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import time
+from abc import abstractmethod, ABCMeta
 from configparser import RawConfigParser
 from datetime import datetime
 
@@ -13,13 +14,6 @@ import requests
 # from luma.led_matrix.device import max7219
 from lxml import etree
 from requests.auth import HTTPBasicAuth
-
-
-def matrix_device_builder():
-    # serial = spi(port=0, device=0, gpio=noop())
-    # device = max7219(serial, width=64, height=16, block_orientation=-90, rotate=0)
-    # return device.contrast(32)
-    return True
 
 
 def load_config():
@@ -34,7 +28,7 @@ def bootstrap():
 
     api_driver = TransilienApiDriver(config)
 
-    matrix_device = matrix_device_builder()
+    matrix_device = DisplayDeviceFactory.build(config)
 
     app = RerWatcher(
         config=config,
@@ -73,11 +67,7 @@ class RerWatcher:
         return requests.get(url=self._api_url, auth=self._api_auth)
 
     def _display_timetables(self, timetables):
-        # with canvas(self._display_device) as draw:
-        #     for msg in messages:
-        #         text(draw, (0, 9), "World", fill="white", font=proportional(LCD_FONT))
-        for timetable in timetables:
-            print(timetable.display())
+        self._display_device.print(timetables)
 
     def _manage_refresh_time(self):
         time.sleep(self._refresh_time)
@@ -137,8 +127,49 @@ class TimeTable:
         self.miss = miss
         self.date = date
 
-    def display(self):
+    def text(self):
         return ("{miss}: {date}".format(miss=self.miss, date=self.date))
+
+
+class DisplayDevice(metaclass=ABCMeta):
+    @abstractmethod
+    def print(self, messages):
+        raise NotImplementedError
+
+
+class ConsoleDisplay(DisplayDevice):
+    def print(self, messages):
+        for message in messages:
+            print(message.text())
+
+
+class MatrixDisplay(DisplayDevice):
+#     def __init__(self):
+#         serial = spi(port=0, device=0, gpio=noop())
+#         self._device = max7219(
+#             serial, width=64, height=16, block_orientation=-90, rotate=0
+#         )
+#         self._device.contrast(32)
+#
+    def display(self, messages):
+        pass
+#         with canvas(self._device) as draw:
+#             for message in messages:
+#                 text(draw, (0, 9), message.text(),
+#                      fill="white", font=proportional(LCD_FONT)
+#                 )
+
+
+class DisplayDeviceFactory:
+    @staticmethod
+    def build(config):
+        type = config.get('device', 'type')
+        if type == 'matrix':
+            return MatrixDisplay()
+        if type == 'console':
+            return ConsoleDisplay()
+
+        raise NotImplementedError
 
 
 if __name__ == "__main__":

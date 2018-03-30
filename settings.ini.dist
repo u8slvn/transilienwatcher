@@ -9,3 +9,6 @@ encoding = utf-8
 default = 10
 step = 10
 max = 30
+
+[device]
+type = console
