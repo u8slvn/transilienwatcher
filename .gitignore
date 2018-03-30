@@ -6,3 +6,4 @@ settings.ini
 *.pyc
 .coverage
 htmlcov/
+\~/
