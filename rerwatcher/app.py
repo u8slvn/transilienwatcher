@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+import os
 import time
-from configparser import RawConfigParser
 
 import requests
+import yaml
 
 from rerwatcher.display_device import DisplayDeviceFactory
 from requests.auth import HTTPBasicAuth
@@ -12,8 +13,25 @@ from rerwatcher.transilien_api import TransilienApiDriver
 
 
 def load_config():
-    config = RawConfigParser()
-    config.read('settings.ini')
+    """Load RerWatcher configuration
+
+    Load the default configuration from 'config.yml' file and check for
+    each parameters from each sections if no environment variables is
+    set. If it does, the default yaml value is overwrite by the
+    environment's one.
+    """
+    with open('config.yml', 'r') as ymlconf:
+        config = yaml.load(ymlconf)
+
+    for section in config:
+        for param in config[section]:
+            env_key = "{section}_{param}".format(
+                section=section,
+                param=param,
+            ).upper()
+            default_value = config[section][param]
+
+            config[section][param] = os.environ.get(env_key, default_value)
 
     return config
 

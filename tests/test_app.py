@@ -1,24 +1,21 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-from unittest.mock import patch, Mock, MagicMock
+import os
+from unittest.mock import patch, Mock
 
 import pytest
 from rerwatcher import app
 
 
-@patch('rerwatcher.app.RawConfigParser')
-def test_load_config_return_data(rawconfigparser_mock):
-    # GIVEN
-    config_mock = MagicMock()
-    config_mock.configure_mock(name='FOO-CONFIG')
-    rawconfigparser_mock.return_value = config_mock
-
+def test_load_config_return_data_with_environment_value():
     # WHEN
-    config = app.load_config()
+    with patch.dict(os.environ, {'API_URL': 'http://test.url'}):
+        config = app.load_config()
 
     # THEN
-    assert config.name == 'FOO-CONFIG'
+    assert config['api']['url'] == 'http://test.url'
+    assert config['device']['type'] == 'console'
 
 
 @patch('rerwatcher.app.RerWatcher')

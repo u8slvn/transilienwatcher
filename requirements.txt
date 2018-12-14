@@ -1,3 +1,4 @@
 requests==2.18.4
 lxml==4.2.1
 luma.led_matrix==1.0.5
+pyyaml==3.13
