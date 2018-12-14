@@ -4,14 +4,27 @@
 from datetime import datetime
 
 from lxml import etree
+import requests
+from requests.auth import HTTPBasicAuth
 
 
-class TransilienApiDriver:
+class TransilienApi:
     def __init__(self, config):
+        self._url = config.get('api', 'url')
+        self._auth = HTTPBasicAuth(
+            username=config.get('api', 'user'),
+            password=config.get('api', 'password')
+        )
         self._date_format = config.get('api', 'date_format')
         self._encoding = config.get('api', 'encoding')
 
-    def get_timetables(self, response, limit=2):
+    def fetch_data(self):
+        response = requests.get(url=self._url, auth=self._auth)
+        timetables = self._get_timetables(response)
+
+        return timetables
+
+    def _get_timetables(self, response, limit=2):
         response_body = response.text.encode(self._encoding)
 
         tree = etree.fromstring(response_body)

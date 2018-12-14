@@ -6,12 +6,12 @@ from datetime import timedelta
 from unittest.mock import patch, Mock
 import pytest
 from freezegun import freeze_time
-from rerwatcher import transilien_api
+from rerwatcher import api
 
 
 class TestTransilienApiDriver:
     def setup(self):
-        self.api_driver = transilien_api.TransilienApiDriver(Mock())
+        self.api_driver = api.TransilienApi(Mock())
         self.api_driver._date_format = '%d/%m/%Y %H:%M'
         self.api_driver._encoding = 'utf-8'
 
@@ -38,8 +38,8 @@ class TestTransilienApiDriver:
         api_driver._timedelta_formatter.assert_called_once_with(
             timedelta(seconds=120))
 
-    @patch('rerwatcher.transilien_api.TimeTable')
-    @patch('rerwatcher.transilien_api.etree')
+    @patch('rerwatcher.api.TimeTable')
+    @patch('rerwatcher.api.etree')
     def test_extract_timetables_should_return_two_elements(
             self,
             etree_mock,
@@ -54,7 +54,7 @@ class TestTransilienApiDriver:
         timetable_mock.side_effect = ['FOO', 'BAR']
 
         # WHEN
-        result_list = api_driver.get_timetables(Mock())
+        result_list = api_driver._get_timetables(Mock())
 
         # THEN
         assert result_list == ['FOO', 'BAR']
@@ -64,7 +64,7 @@ class TestTransilienApiDriver:
 class TestTimeTable:
     def test_text(self):
         # GIVEN
-        timetable = transilien_api.TimeTable('FOO', 'BAR')
+        timetable = api.TimeTable('FOO', 'BAR')
 
         # WHEN
         message = timetable.text()
