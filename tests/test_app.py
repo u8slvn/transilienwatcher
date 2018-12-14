@@ -33,13 +33,13 @@ def test_bootstrap_should_create_an_app(load_config_mock,
 
     # THEN
     app_mock.assert_called_with(config='FOO-CONFIG',
-                                display_device='FOO-DEVICE-BUILDER')
+                                display='FOO-DEVICE-BUILDER')
 
 
 class TestRerWatcher:
     def setup(self):
         self.app = app.RerWatcher(
-            config=Mock(), display_device=Mock()
+            config=Mock(), display=Mock()
         )
 
     @patch('rerwatcher.api.requests')

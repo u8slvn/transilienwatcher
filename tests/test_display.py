@@ -16,7 +16,7 @@ class TestConsoleDisplay:
         console_display = display.ConsoleDisplay()
 
         # WHEN
-        console_display.display(messages)
+        console_display.print(messages)
 
         # THEN
         print_mock.assert_called_with('FOO')

@@ -12,12 +12,12 @@ from luma.led_matrix.device import max7219
 
 class DisplayDevice(ABC):
     @abstractmethod
-    def display(self, messages):
+    def print(self, messages):
         pass
 
 
 class ConsoleDisplay(DisplayDevice):
-    def display(self, messages):
+    def print(self, messages):
         for message in messages:
             print(message.text())
 
@@ -30,8 +30,7 @@ class MatrixDisplay(DisplayDevice):
         )
         self._device.contrast(32)
 
-    def display(self, messages):
-        pass
+    def print(self, messages):
         with canvas(self._device) as draw:
             for message in messages:
                 text(

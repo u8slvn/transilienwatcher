@@ -37,21 +37,21 @@ def load_config():
 def build_rer_watcher():
     config = load_config()
 
-    matrix_device = DisplayDeviceFactory.build(config)
+    matrix_display = DisplayDeviceFactory.build(config)
 
     app = RerWatcher(
         config=config,
-        display_device=matrix_device
+        display=matrix_display
     )
 
     return app
 
 
 class RerWatcher:
-    def __init__(self, config, display_device):
+    def __init__(self, config, display):
         self.is_running = False
         self._api = TransilienApi(config)
-        self._display_device = display_device
+        self._display = display
         self._refresh_time = config.getint('refresh_time', 'default')
         self._refresh_time_step = config.getint('refresh_time', 'step')
         self._refresh_time_max = config.getint('refresh_time', 'max')
@@ -61,11 +61,8 @@ class RerWatcher:
 
         while self.is_running:
             timetables = self._api.fetch_data()
-            self._display_device.print(timetables)
+            self._display.print(timetables)
             self._manage_refresh_time()
-
-    def _display_timetables(self, timetables):
-        self._display_device.print(timetables)
 
     def _manage_refresh_time(self):
         time.sleep(self._refresh_time)
