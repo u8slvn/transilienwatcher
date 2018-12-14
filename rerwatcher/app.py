@@ -6,7 +6,7 @@ import time
 
 import yaml
 
-from rerwatcher.display_device import DisplayDeviceFactory
+from rerwatcher.display import DisplayDeviceFactory
 from rerwatcher.api import TransilienApi
 
 

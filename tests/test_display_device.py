@@ -3,7 +3,7 @@
 
 import pytest
 from unittest.mock import patch, Mock
-from rerwatcher import display_device
+from rerwatcher import display
 
 
 class TestConsoleDisplay:
@@ -13,7 +13,7 @@ class TestConsoleDisplay:
         message = Mock()
         message.text.return_value = 'FOO'
         messages = [message]
-        console_display = display_device.ConsoleDisplay()
+        console_display = display.ConsoleDisplay()
 
         # WHEN
         console_display.display(messages)
@@ -23,7 +23,7 @@ class TestConsoleDisplay:
 
 
 class TestDisplayDeviceFactory:
-    @patch('rerwatcher.display_device.ConsoleDisplay')
+    @patch('rerwatcher.display.ConsoleDisplay')
     def test_device_builder_console_display(self, console_display_mock):
         # GIVEN
         config_console = Mock()
@@ -31,12 +31,12 @@ class TestDisplayDeviceFactory:
         console_display_mock.return_value = 'FOO-CONSOLE'
 
         # WHEN
-        device = display_device.DisplayDeviceFactory.build(config_console)
+        device = display.DisplayDeviceFactory.build(config_console)
 
         # THEN
         assert device == 'FOO-CONSOLE'
 
-    @patch('rerwatcher.display_device.MatrixDisplay')
+    @patch('rerwatcher.display.MatrixDisplay')
     def test_device_builder_matrix_display(self, matrix_display_mock):
         # GIVEN
         config_matrix = Mock()
@@ -44,7 +44,7 @@ class TestDisplayDeviceFactory:
         matrix_display_mock.return_value = 'FOO-MATRIX'
 
         # WHEN
-        device = display_device.DisplayDeviceFactory.build(config_matrix)
+        device = display.DisplayDeviceFactory.build(config_matrix)
 
         # THEN
         assert device == 'FOO-MATRIX'
@@ -56,6 +56,6 @@ class TestDisplayDeviceFactory:
 
         # WHEN
         with pytest.raises(NotImplementedError) as error:
-            display_device.DisplayDeviceFactory.build(config_matrix)
+            display.DisplayDeviceFactory.build(config_matrix)
 
         assert error.typename == 'NotImplementedError'
