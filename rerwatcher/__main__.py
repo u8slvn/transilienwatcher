@@ -3,7 +3,6 @@
 
 import app
 
-
 try:
     rer_watcher = app.build_rer_watcher()
     rer_watcher.start()

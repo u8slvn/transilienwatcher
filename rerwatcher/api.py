@@ -3,8 +3,8 @@
 
 from datetime import datetime
 
-from lxml import etree
 import requests
+from lxml import etree
 from requests.auth import HTTPBasicAuth
 
 

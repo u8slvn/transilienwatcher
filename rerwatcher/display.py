@@ -11,7 +11,7 @@ from luma.led_matrix.device import max7219
 
 
 class DiplayTypeNotStupported(NotImplementedError):
-        pass
+    pass
 
 
 class DisplayDevice(ABC):

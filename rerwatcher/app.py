@@ -2,12 +2,12 @@
 # coding: utf-8
 
 import os
-import time
 
+import time
 import yaml
 
-from rerwatcher.display import DisplayDeviceFactory
 from rerwatcher.api import TransilienApi
+from rerwatcher.display import DisplayDeviceFactory
 
 
 def load_config():
