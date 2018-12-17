@@ -5,7 +5,8 @@ import os
 from unittest.mock import patch, Mock
 
 import pytest
-from rerwatcher import app
+from .context import app
+from . import FAKE_CONFIG
 
 
 def test_load_config_return_data_with_environment_value():
@@ -39,7 +40,7 @@ def test_bootstrap_should_create_an_app(load_config_mock,
 class TestRerWatcher:
     def setup(self):
         self.app = app.RerWatcher(
-            config=Mock(), display=Mock()
+            config=FAKE_CONFIG, display=Mock()
         )
 
     @patch('rerwatcher.api.requests')

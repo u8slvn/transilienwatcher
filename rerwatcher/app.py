@@ -52,9 +52,9 @@ class RerWatcher:
         self.is_running = False
         self._api = TransilienApi(config)
         self._display = display
-        self._refresh_time = config.getint('refresh_time', 'default')
-        self._refresh_time_step = config.getint('refresh_time', 'step')
-        self._refresh_time_max = config.getint('refresh_time', 'max')
+        self._refresh_time = config['refresh_time']['default']
+        self._refresh_time_step = config['refresh_time']['step']
+        self._refresh_time_max = config['refresh_time']['max']
 
     def start(self):
         self.is_running = True

@@ -10,13 +10,13 @@ from requests.auth import HTTPBasicAuth
 
 class TransilienApi:
     def __init__(self, config):
-        self._url = config.get('api', 'url')
+        self._url = config['api']['url']
         self._auth = HTTPBasicAuth(
-            username=config.get('api', 'user'),
-            password=config.get('api', 'password')
+            username=config['api']['user'],
+            password=config['api']['password']
         )
-        self._date_format = config.get('api', 'date_format')
-        self._encoding = config.get('api', 'encoding')
+        self._date_format = config['api']['date_format']
+        self._encoding = config['api']['encoding']
 
     def fetch_data(self):
         response = requests.get(url=self._url, auth=self._auth)

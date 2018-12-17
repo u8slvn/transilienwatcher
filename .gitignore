@@ -7,3 +7,4 @@ settings.ini
 .coverage
 htmlcov/
 \~/
+settings.env

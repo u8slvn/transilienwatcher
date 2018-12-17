@@ -1,9 +1,9 @@
 api:
-  url: 'http://api.transilien.com/gare/{departure_station}/depart/{arrival_sation}'
-  user: 'user'
-  password: 'password'
+  url: https://api.transilien.com/gare/{departure_station}/depart/{arrival_sation}
+  user: user
+  password: password
   date_format: '%d/%m/%Y %H:%M'
-  encoding: 'utf-8'
+  encoding: utf-8
 
 refresh_time:
   default: 10
@@ -11,4 +11,4 @@ refresh_time:
   max: 30
 
 device:
-  type: 'console'
+  type: console

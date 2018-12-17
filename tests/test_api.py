@@ -6,14 +6,13 @@ from datetime import timedelta
 from unittest.mock import patch, Mock
 import pytest
 from freezegun import freeze_time
-from rerwatcher import api
+from .context import api
+from . import FAKE_CONFIG
 
 
 class TestTransilienApiDriver:
     def setup(self):
-        self.api_driver = api.TransilienApi(Mock())
-        self.api_driver._date_format = '%d/%m/%Y %H:%M'
-        self.api_driver._encoding = 'utf-8'
+        self.api_driver = api.TransilienApi(FAKE_CONFIG)
 
     @pytest.mark.parametrize("given,expected", [
         (timedelta(seconds=40), '1min',),

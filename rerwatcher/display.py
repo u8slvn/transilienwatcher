@@ -10,6 +10,10 @@ from luma.core.render import canvas
 from luma.led_matrix.device import max7219
 
 
+class DiplayTypeNotStupported(NotImplementedError):
+        pass
+
+
 class DisplayDevice(ABC):
     @abstractmethod
     def print(self, messages):
@@ -42,10 +46,10 @@ class MatrixDisplay(DisplayDevice):
 class DisplayDeviceFactory(ABC):
     @staticmethod
     def build(config):
-        type = config.get('device', 'type')
+        type = config['device']['type']
         if type == 'matrix':
             return MatrixDisplay()
         if type == 'console':
             return ConsoleDisplay()
 
-        raise NotImplementedError
+        raise DiplayTypeNotStupported

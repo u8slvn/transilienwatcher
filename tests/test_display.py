@@ -3,7 +3,8 @@
 
 import pytest
 from unittest.mock import patch, Mock
-from rerwatcher import display
+from .context import display
+from . import FAKE_CONFIG
 
 
 class TestConsoleDisplay:
@@ -26,12 +27,11 @@ class TestDisplayDeviceFactory:
     @patch('rerwatcher.display.ConsoleDisplay')
     def test_device_builder_console_display(self, console_display_mock):
         # GIVEN
-        config_console = Mock()
-        config_console.get.return_value = 'console'
+        FAKE_CONFIG['device']['type'] = 'console'
         console_display_mock.return_value = 'FOO-CONSOLE'
 
         # WHEN
-        device = display.DisplayDeviceFactory.build(config_console)
+        device = display.DisplayDeviceFactory.build(FAKE_CONFIG)
 
         # THEN
         assert device == 'FOO-CONSOLE'
@@ -39,23 +39,21 @@ class TestDisplayDeviceFactory:
     @patch('rerwatcher.display.MatrixDisplay')
     def test_device_builder_matrix_display(self, matrix_display_mock):
         # GIVEN
-        config_matrix = Mock()
-        config_matrix.get.return_value = 'matrix'
+        FAKE_CONFIG['device']['type'] = 'matrix'
         matrix_display_mock.return_value = 'FOO-MATRIX'
 
         # WHEN
-        device = display.DisplayDeviceFactory.build(config_matrix)
+        device = display.DisplayDeviceFactory.build(FAKE_CONFIG)
 
         # THEN
         assert device == 'FOO-MATRIX'
 
     def test_device_builder_fail(self):
         # GIVEN
-        config_matrix = Mock()
-        config_matrix.get.return_value = 'foobar'
+        FAKE_CONFIG['device']['type'] = 'foo'
 
         # WHEN
-        with pytest.raises(NotImplementedError) as error:
-            display.DisplayDeviceFactory.build(config_matrix)
+        with pytest.raises(display.DiplayTypeNotStupported) as error:
+            display.DisplayDeviceFactory.build(FAKE_CONFIG)
 
-        assert error.typename == 'NotImplementedError'
+        assert error.typename == 'DiplayTypeNotStupported'
