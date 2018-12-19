@@ -8,6 +8,26 @@ from lxml import etree
 from requests.auth import HTTPBasicAuth
 
 
+def calculate_time_delta_with_now(date, date_format):
+    date = datetime.strptime(date, date_format)
+    timedelta = date - datetime.now()
+
+    return timedelta
+
+
+def format_timedelta(timedelta):
+    hours = timedelta.seconds // 3600
+    minutes = (timedelta.seconds // 60) % 60
+    if minutes < 1:
+        minutes = 1
+
+    time_str = "{}min".format(minutes)
+    if hours > 1:
+        time_str = "{}h".format(hours)
+
+    return time_str
+
+
 class TransilienApi:
     def __init__(self, config):
         self._url = config['api']['url']
@@ -30,44 +50,29 @@ class TransilienApi:
         tree = etree.fromstring(response_body)
         trains = tree.xpath('/passages/train')
 
-        timetables_list = list()
+        timetables = list()
 
         for train in trains[:limit]:
             miss = train.find('miss').text
             date = train.find('date').text
 
-            date = self._convert_date_to_time(date)
+            timedelta = calculate_time_delta_with_now(
+                date=date,
+                date_format=self._date_format
+            )
+            time = format_timedelta(timedelta=timedelta)
 
-            timetable = TimeTable(miss=miss, date=date)
+            timetable = TimeTable(miss=miss, time=time)
 
-            timetables_list.append(timetable)
+            timetables.append(timetable)
 
-        return timetables_list
-
-    def _convert_date_to_time(self, date_str):
-        date = datetime.strptime(date_str, self._date_format)
-        diff = date - datetime.now()
-        time = self._timedelta_formatter(diff)
-
-        return time
-
-    def _timedelta_formatter(self, time_value):
-        hours = time_value.seconds // 3600
-        minutes = (time_value.seconds // 60) % 60
-        if minutes < 1:
-            minutes = 1
-
-        time_str = "{}min".format(minutes)
-        if hours > 1:
-            time_str = "{}h".format(hours)
-
-        return time_str
+        return timetables
 
 
 class TimeTable:
-    def __init__(self, miss, date):
+    def __init__(self, miss, time):
         self.miss = miss
-        self.date = date
+        self.time = time
 
     def text(self):
-        return ("{miss}: {date}".format(miss=self.miss, date=self.date))
+        return ("{miss}: {time}".format(miss=self.miss, time=self.time))

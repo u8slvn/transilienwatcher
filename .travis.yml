@@ -5,7 +5,7 @@ python:
   - "3.5"
   - "3.6"
 install:
-  - pip install -r requirements_dev.txt
+  - pip install -r requirements-dev.txt
   - pip install coveralls
 script:
   - pytest tests/ --cov=rerwatcher
