@@ -18,7 +18,7 @@ def load_config():
     set. If it does, the default yaml value is overwrite by the
     environment's one.
 
-    returns:
+    Returns:
         config (dict): the global rerwatcher configuration
 
     """
@@ -43,7 +43,7 @@ def build_rer_watcher():
 
     Build and bootsrap the RERWatcher application.
 
-    returns:
+    Returns:
         app (RerWatcher): the application instance
 
     """
