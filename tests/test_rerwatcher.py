@@ -29,6 +29,9 @@ def test_build_rer_watcher_return_app(load_config, fake_config):
     assert isinstance(app, RerWatcher)
     assert app._refresh_time == fake_config['refresh_time']['default']
     assert isinstance(app._api, TransilienApi)
-    assert app._api._url == fake_config['api']['url']
+    assert app._api._url == fake_config['api']['url'].format(
+        departure_station=fake_config['api']['departure_station'],
+        arrival_station=fake_config['api']['arrival_station'],
+    )
     assert isinstance(app._api._auth, HTTPBasicAuth)
     assert isinstance(app._display, DisplayDevice)

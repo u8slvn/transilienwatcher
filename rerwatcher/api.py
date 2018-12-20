@@ -61,20 +61,24 @@ class TransilienApi:
 
     Args:
         config (dict): the config must contain an 'api' key containing
-            all the mandatory data: 'url', 'user', 'password',
-            'date_format', 'encoding'.
+            all the mandatory data: 'url', 'departure_station',
+            'arrival_sation', 'user', 'password', 'date_format',
+            'encoding'.
 
     Attributes:
-        _url (str): https://api.transilien.com/gare/{departure_station}/depart/{arrival_sation}
+        _url (str): https://api.transilien.com/gare/{departure_station}/depart/{arrival_station}
         _auth (HTTPBasicAuth): the basic authentication built with the
-            user and password  config params.
+            user and password config params.
         _date_format (str): '%d/%m/%Y %H:%M'
         _encoding (str): 'utf-8'
 
     """
 
     def __init__(self, config):
-        self._url = config['api']['url']
+        self._url = config['api']['url'].format(
+            departure_station=config['api']['departure_station'],
+            arrival_station=config['api']['arrival_station']
+        )
         self._auth = HTTPBasicAuth(
             username=config['api']['user'],
             password=config['api']['password']

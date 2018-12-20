@@ -1,5 +1,7 @@
 api:
-  url: https://api.transilien.com/gare/{departure_station}/depart/{arrival_sation}
+  url: https://api.transilien.com/gare/{departure_station}/depart/{arrival_station}
+  departure_station: 00000000
+  arrival_station: 00000000
   user: user
   password: password
   date_format: '%d/%m/%Y %H:%M'

@@ -33,7 +33,9 @@ class TestTransilienApiDriver:
         data = api.fetch_data()
 
         assert 2 == len(data)
+        assert isinstance(data[0], TimeTable)
         assert data[0].text() == 'DACA: 8h'
+        assert isinstance(data[1], TimeTable)
         assert data[1].text() == 'FACA: 9h'
 
 
