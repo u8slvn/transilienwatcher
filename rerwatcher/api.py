@@ -8,6 +8,7 @@ format every response data fetched from it.
 """
 
 from datetime import datetime
+from string import Template
 
 import requests
 from lxml import etree
@@ -66,7 +67,7 @@ class TransilienApi:
             'encoding'.
 
     Attributes:
-        _url (str): https://api.transilien.com/gare/{departure_station}/depart/{arrival_station}
+        _url (str): https://api.transilien.com/gare/${departure_station}/depart/${arrival_station}
         _auth (HTTPBasicAuth): the basic authentication built with the
             user and password config params.
         _date_format (str): '%d/%m/%Y %H:%M'
@@ -75,7 +76,8 @@ class TransilienApi:
     """
 
     def __init__(self, config):
-        self._url = config['api']['url'].format(
+        url_template = Template(config['api']['url'])
+        self._url = url_template.substitute(
             departure_station=config['api']['departure_station'],
             arrival_station=config['api']['arrival_station']
         )

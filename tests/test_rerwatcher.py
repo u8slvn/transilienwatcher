@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import os
+from string import Template
 from unittest.mock import patch
 
 from requests.auth import HTTPBasicAuth
@@ -29,7 +30,7 @@ def test_build_rer_watcher_return_app(load_config, fake_config):
     assert isinstance(app, RerWatcher)
     assert app._refresh_time == fake_config['refresh_time']['default']
     assert isinstance(app._api, TransilienApi)
-    assert app._api._url == fake_config['api']['url'].format(
+    assert app._api._url == Template(fake_config['api']['url']).substitute(
         departure_station=fake_config['api']['departure_station'],
         arrival_station=fake_config['api']['arrival_station'],
     )
