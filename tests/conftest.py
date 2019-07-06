@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import pytest
+import requests
 
 from rerwatcher.app import RerWatcher
 
@@ -12,8 +13,6 @@ FAKE_CONFIG = {
         "arrival_station": 321,
         "user": 'user',
         "password": 'password',
-        "date_format": '%d/%m/%Y %H:%M',
-        "encoding": 'utf-8',
     },
     "refresh_time": {
         "default": 10,
@@ -30,3 +29,22 @@ FAKE_CONFIG = {
 def mock_config(monkeypatch):
     load_config = lambda: FAKE_CONFIG
     monkeypatch.setattr(RerWatcher, "load_config", load_config)
+
+
+def requests_fixture():
+    with open('tests/fixture.xml') as file:
+        return file.read()
+
+
+class MockResponse:
+    def __init__(self, text):
+        self.text = text
+
+
+FAKE_RESPONSE = MockResponse(requests_fixture())
+
+
+@pytest.fixture(scope="function")
+def mock_requests(monkeypatch):
+    get = lambda: FAKE_RESPONSE
+    monkeypatch.setattr(requests, "get", get)

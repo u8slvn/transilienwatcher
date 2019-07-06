@@ -4,8 +4,6 @@ api:
   arrival_station: 00000000
   user: user
   password: password
-  date_format: '%d/%m/%Y %H:%M'
-  encoding: utf-8
 
 refresh_time:
   default: 10

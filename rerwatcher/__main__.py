@@ -2,7 +2,7 @@
 # coding: utf-8
 from loguru import logger
 
-from app import RerWatcher
+from rerwatcher.app import RerWatcher
 
 logger.add("log/file_{time}.log", rotation="12:00")
 
