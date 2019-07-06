@@ -11,7 +11,9 @@ from datetime import datetime
 from string import Template
 
 import requests
+from loguru import logger
 from lxml import etree
+from requests import RequestException
 from requests.auth import HTTPBasicAuth
 
 
@@ -52,6 +54,26 @@ def format_timedelta(timedelta):
         time = "{}h".format(hours)
 
     return time
+
+
+class TimeTable:
+    """Timetable
+
+    Encapsulate timetable information.
+
+    Attributes:
+        miss (str): the train code.
+        time: the departure time.
+
+    """
+
+    def __init__(self, miss, time):
+        self.miss = miss
+        self.time = time
+
+    def text(self):
+        """Return the timetable to nice format."""
+        return f"{self.miss}: {self.time}"
 
 
 class TransilienApi:
@@ -96,8 +118,21 @@ class TransilienApi:
         Returns:
             timetables (list<TimeTable>): the next departure timetable.
         """
-        response = requests.get(url=self._url, auth=self._auth)
-        timetables = self._get_timetables(response)
+        response = None
+        timetables = [TimeTable(miss='Error', time='')]
+
+        try:
+            logger.info(f"Fetching data from {self._url}.")
+            response = requests.get(url=self._url, auth=self._auth)
+        except RequestException:
+            logger.error(f"Fetching {self._url} failed.")
+
+        try:
+            if response:
+                logger.info(f"Formatting response.")
+                timetables = self._get_timetables(response)
+        except Exception:
+            logger.error(f"Formatting data failed.")
 
         return timetables
 
@@ -125,23 +160,3 @@ class TransilienApi:
             timetables.append(timetable)
 
         return timetables
-
-
-class TimeTable:
-    """Timetable
-
-    Encapsulate timetable information.
-
-    Attributes:
-        miss (str): the train code.
-        time: the departure time.
-
-    """
-
-    def __init__(self, miss, time):
-        self.miss = miss
-        self.time = time
-
-    def text(self):
-        """Return the timetable to nice format."""
-        return ("{miss}: {time}".format(miss=self.miss, time=self.time))
