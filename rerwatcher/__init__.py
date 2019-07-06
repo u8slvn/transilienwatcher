@@ -23,7 +23,7 @@ def load_config():
 
     """
     with open('config.yml', 'r') as ymlconf:
-        config = yaml.load(ymlconf)
+        config = yaml.load(ymlconf, Loader=yaml.FullLoader)
 
     for section in config:
         for param in config[section]:
