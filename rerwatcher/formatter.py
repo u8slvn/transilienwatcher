@@ -14,12 +14,10 @@ def calculate_time_delta_with_now(date, date_format):
 def format_timedelta(timedelta):
     hours = timedelta.seconds // 3600
     minutes = (timedelta.seconds // 60) % 60
-    if minutes < 1:
-        minutes = 1
+    minutes = 1 if minutes < 1 else minutes
 
-    time = "{}min".format(minutes)
-    if hours > 1:
-        time = "{}h".format(hours)
+    time = f"{minutes}min"
+    time = f"{hours}h" if hours > 1 else time
 
     return time
 
