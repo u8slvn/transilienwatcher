@@ -46,8 +46,8 @@ def test_rerwatcher_workflow(mocker, mock_config):
     ]
     assert expected_formatter_calls == formatter.call_args_list
     expected_display_calls = [
-        call([sentinel.timetable1, sentinel.timetable2]),
-        call([sentinel.timetable1, sentinel.timetable2]),
+        call(messages=[sentinel.timetable1, sentinel.timetable2]),
+        call(messages=[sentinel.timetable1, sentinel.timetable2]),
     ]
     assert expected_display_calls == display.print.call_args_list
     assert 2 == sleep.call_count

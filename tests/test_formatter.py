@@ -6,7 +6,6 @@ from freezegun import freeze_time
 from rerwatcher.formatter import (TimeTable, format_timedelta,
                                   calculate_time_delta_with_now,
                                   TransilienApiFormatter)
-from tests.conftest import FAKE_RESPONSE
 
 
 def test_timetable_text():
@@ -39,10 +38,10 @@ def test_calculate_time_delta_with_now():
 
 
 @freeze_time("27-10-2018 13:30")
-def test_transilien_api_formatter():
+def test_transilien_api_formatter(requests_fixture):
     formatter = TransilienApiFormatter()
 
-    result = formatter.format_response(FAKE_RESPONSE)
+    result = formatter.format_response(requests_fixture)
 
     assert result[0].miss == 'DACA'
     assert result[0].time == '8h'

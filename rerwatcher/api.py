@@ -19,12 +19,13 @@ class TransilienApi:
         )
 
     def fetch_data(self):
-        response = None
+        data = None
 
         try:
             logger.info(f"Fetching data from {self._url}.")
             response = requests.get(url=self._url, auth=self._auth)
+            data = response.text
         except (RequestException, ReadTimeout):
             logger.error(f"Fetching {self._url} failed.")
 
-        return response
+        return data

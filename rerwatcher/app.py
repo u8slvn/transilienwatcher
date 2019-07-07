@@ -62,7 +62,7 @@ class _App:
         while self.is_running:
             response = self.api.fetch_data()
             timetables = self.formatter.format_response(response=response)
-            self.display.print(timetables)
+            self.display.print(messages=timetables)
             self._manage_refresh_time()
 
     def _manage_refresh_time(self):

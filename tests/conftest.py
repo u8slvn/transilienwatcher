@@ -36,23 +36,16 @@ def mock_config(monkeypatch):
     monkeypatch.setattr(RerWatcher, 'load_config', load_config)
 
 
+@pytest.fixture(scope='function')
 def requests_fixture():
     with open('tests/fixture.xml') as file:
         return file.read()
 
 
-class MockResponse:
-    def __init__(self, text):
-        self.text = text
-
-
-FAKE_RESPONSE = MockResponse(requests_fixture())
-
-
 @pytest.fixture(scope='function')
-def mock_requests(monkeypatch):
+def mock_requests(monkeypatch, requests_fixture):
     def get():
-        return FAKE_RESPONSE
+        return requests_fixture
 
     monkeypatch.setattr(requests, 'get', get)
 

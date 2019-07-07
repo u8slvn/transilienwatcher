@@ -57,7 +57,7 @@ class TransilienApiFormatter:
         return timetables
 
     def _format_response(self, response, limit):
-        response_body = response.text.encode(self.encoding)
+        response_body = response.encode(self.encoding)
 
         tree = etree.fromstring(response_body)
         trains = tree.xpath('/passages/train')
