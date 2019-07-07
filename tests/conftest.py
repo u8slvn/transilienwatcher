@@ -32,6 +32,7 @@ FAKE_CONFIG = {
 def mock_config(monkeypatch):
     def load_config():
         return FAKE_CONFIG
+
     monkeypatch.setattr(RerWatcher, 'load_config', load_config)
 
 
@@ -52,4 +53,16 @@ FAKE_RESPONSE = MockResponse(requests_fixture())
 def mock_requests(monkeypatch):
     def get():
         return FAKE_RESPONSE
+
     monkeypatch.setattr(requests, 'get', get)
+
+
+@pytest.fixture(scope='function')
+def mock_luma(mocker):
+    serial = mocker.patch('rerwatcher.display.serial')
+    device = mocker.patch('rerwatcher.display.device')
+    text = mocker.patch('rerwatcher.display.text')
+    font = mocker.patch('rerwatcher.display.font')
+    canvas = mocker.patch('rerwatcher.display.canvas')
+
+    return serial, device, text, font, canvas

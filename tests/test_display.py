@@ -1,50 +1,52 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-from unittest.mock import patch, Mock
-
 import pytest
 
 from rerwatcher import display
 from tests.conftest import FAKE_CONFIG
 
 
+class TestMatrixDisplay:
+    def test_print_on_matrix(self, mocker, mock_luma):
+        messages = [mocker.Mock(**{'text.return_value': 'foo'})]
+        matrix = display.MatrixDisplay()
+        *_, text, _, canvas = mock_luma
+
+        matrix.print(messages)
+
+        canvas.assert_called_once()
+        text.assert_called_once()
+
+
 class TestConsoleDisplay:
-    @patch('builtins.print')
-    def test_print_on_console(self, print):
-        message = Mock()
-        message.text.return_value = 'FOO'
-        messages = [message]
-        console_display = display.ConsoleDisplay()
+    def test_print_on_console(self, mocker):
+        bi_print = mocker.patch('builtins.print')
+        messages = [mocker.Mock(**{'text.return_value': 'foo'})]
+        console = display.ConsoleDisplay()
 
-        console_display.print(messages)
+        console.print(messages)
 
-        print.assert_called_with('FOO')
+        bi_print.assert_called_with('foo')
 
 
 class TestDisplayDeviceFactory:
-    @patch('rerwatcher.display.ConsoleDisplay')
-    def test_device_builder_console_display(self, console_display):
+    def test_device_builder_console_display(self):
         FAKE_CONFIG['device']['type'] = 'console'
-        console_display.return_value = 'FOO-CONSOLE'
 
         device = display.DisplayDeviceFactory.build(FAKE_CONFIG)
 
-        assert device == 'FOO-CONSOLE'
+        assert isinstance(device, display.ConsoleDisplay)
 
-    @patch('rerwatcher.display.MatrixDisplay')
-    def test_device_builder_matrix_display(self, matrix_display):
+    def test_device_builder_matrix_display(self, mock_luma):
         FAKE_CONFIG['device']['type'] = 'matrix'
-        matrix_display.return_value = 'FOO-MATRIX'
 
         device = display.DisplayDeviceFactory.build(FAKE_CONFIG)
 
-        assert device == 'FOO-MATRIX'
+        assert isinstance(device, display.MatrixDisplay)
 
     def test_device_builder_fail(self):
         FAKE_CONFIG['device']['type'] = 'foo'
 
-        with pytest.raises(display.DiplayTypeNotStupported) as error:
+        with pytest.raises(display.DisplayTypeNotSupportedError):
             display.DisplayDeviceFactory.build(FAKE_CONFIG)
-
-        assert error.typename == 'DiplayTypeNotStupported'
