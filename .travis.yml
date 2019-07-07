@@ -6,7 +6,9 @@ python:
 install:
   - pip install -r requirements-dev.txt
   - pip install coveralls
+before_script:
+  flake8 .
 script:
-  - pytest tests/ --cov=rerwatcher
+  pytest tests/ --cov=rerwatcher
 after_script:
   - if [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then coveralls; fi

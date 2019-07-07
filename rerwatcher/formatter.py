@@ -4,6 +4,7 @@ from loguru import logger
 from lxml import etree
 
 
+@logger.catch
 def calculate_time_delta_with_now(date, date_format):
     date = datetime.strptime(date, date_format)
     timedelta = date - datetime.now()
@@ -11,6 +12,7 @@ def calculate_time_delta_with_now(date, date_format):
     return timedelta
 
 
+@logger.catch
 def format_timedelta(timedelta):
     hours = timedelta.seconds // 3600
     minutes = (timedelta.seconds // 60) % 60
@@ -49,7 +51,7 @@ class TransilienApiFormatter:
                 limit=limit
             )
         except Exception:
-            logger.error(f"Formatting data failed.")
+            logger.error("Formatting data failed.")
             return [TimeTable(miss='Error', time='format')]
 
         return timetables

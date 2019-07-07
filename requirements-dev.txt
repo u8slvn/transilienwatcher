@@ -4,3 +4,4 @@ pytest-mock==1.10.4
 freezegun==0.2.3
 pytest-cov==2.5.1
 coverage==4.5.2
+flake8==3.7.7

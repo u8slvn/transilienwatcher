@@ -4,7 +4,7 @@ from loguru import logger
 
 from rerwatcher.app import RerWatcher
 
-logger.add("log/file_{time}.log", rotation="12:00")
+logger.add("log/file_{time}.log", rotation="00:00", retention="2 days")
 
 rer_watcher = RerWatcher()
 rer_watcher.start()
