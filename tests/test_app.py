@@ -4,6 +4,8 @@
 import os
 from unittest.mock import patch, sentinel, call
 
+import pytest
+
 from rerwatcher.app import RerWatcher
 from tests.conftest import FAKE_CONFIG
 
@@ -35,8 +37,9 @@ def test_rerwatcher_workflow(mocker, mock_config):
         return_value=[sentinel.timetable1, sentinel.timetable2]
     )
 
-    app = RerWatcher()
-    app.start()
+    app = RerWatcher(None)
+    with pytest.raises(KeyboardInterrupt):
+        app._app.start()
 
     display_builder.assert_called_once_with(FAKE_CONFIG)
     api.assert_called_once_with(FAKE_CONFIG)

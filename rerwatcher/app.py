@@ -4,14 +4,17 @@ import time
 import yaml
 from loguru import logger
 
-from rerwatcher.formatter import TransilienApiFormatter
 from rerwatcher.api import TransilienApi
+from rerwatcher.daemon import Daemon
 from rerwatcher.display import DisplayDeviceFactory
+from rerwatcher.formatter import TransilienApiFormatter
 
 
-class RerWatcher:
-    def __init__(self):
-        logger.info("Building RERWatcher app...")
+class RerWatcher(Daemon):
+    def __init__(self, *args, **kwargs):
+        app_name = self.__class__.__name__
+        super(RerWatcher, self).__init__(app_name=app_name, *args, **kwargs)
+
         config = RerWatcher.load_config()
         matrix_display = DisplayDeviceFactory.build(config)
         transilien_api = TransilienApi(config)
@@ -23,7 +26,6 @@ class RerWatcher:
             api=transilien_api,
             formatter=transilien_formatter
         )
-        logger.info("RERWatcher app built.")
 
     @staticmethod
     def load_config():
@@ -39,13 +41,9 @@ class RerWatcher:
 
         return config
 
-    def start(self):
+    def run(self):
         logger.info("Starting RERWatcher app...")
-        try:
-            self._app.start()
-        except KeyboardInterrupt:
-            logger.info("RERWatcher app stopped.")
-            pass
+        self._app.start()
 
 
 class _App:
