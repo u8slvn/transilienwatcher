@@ -3,28 +3,25 @@ import time
 import yaml
 from loguru import logger
 
-from rerwatcher.api import TransilienApi
+from rerwatcher.transilien import Transilien
 from rerwatcher.daemon import Daemon
 from rerwatcher.display import DisplayDeviceFactory
-from rerwatcher.formatter import TransilienApiFormatter
 from rerwatcher.utils import overwrite_config_with_env
 
 
 class RerWatcher(Daemon):
     def __init__(self, *args, **kwargs):
         app_name = self.__class__.__name__
-        super(RerWatcher, self).__init__(app_name=app_name, *args, **kwargs)
+        super().__init__(app_name=app_name, *args, **kwargs)
 
         config = RerWatcher.load_config()
         matrix_display = DisplayDeviceFactory.build(config['device'])
-        transilien_api = TransilienApi(config['api'])
-        transilien_formatter = TransilienApiFormatter()
+        transilien = Transilien(config['api'])
 
         self._app = _App(
             config=config,
             display=matrix_display,
-            api=transilien_api,
-            formatter=transilien_formatter
+            transilien=transilien,
         )
 
     @staticmethod
@@ -40,20 +37,18 @@ class RerWatcher(Daemon):
 
 
 class _App:
-    def __init__(self, config, display, api, formatter):
+    def __init__(self, config, display, transilien):
         self.is_running = False
-        self.api = api
+        self.transilien = transilien
         self.display = display
-        self.formatter = formatter
         self._refresh_time = config['refresh_time']['default']
 
     def start(self):
         self.is_running = True
 
         while self.is_running:
-            response = self.api.fetch_data()
-            timetables = self.formatter.format_response(response=response)
-            self.display.print(messages=timetables)
+            messages = self.transilien.fetch_data()
+            self.display.print(messages=messages)
             self._manage_refresh_time()
 
     def _manage_refresh_time(self):

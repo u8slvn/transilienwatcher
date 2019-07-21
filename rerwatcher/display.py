@@ -16,7 +16,7 @@ class DisplayDevice(ABC):
 class Console(DisplayDevice):
     def print(self, messages):
         for message in messages:
-            print(message.text())
+            print(message)
 
 
 class LCD(DisplayDevice):
@@ -26,7 +26,7 @@ class LCD(DisplayDevice):
     def print(self, messages):
         for line, message in enumerate(messages, 1):
             self._device.cursor_pos = (line, 0)
-            self._device.write_string(message.text())
+            self._device.write_string(message)
 
 
 class DisplayDeviceFactory(ABC):

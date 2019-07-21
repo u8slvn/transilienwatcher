@@ -2,12 +2,10 @@
 # coding: utf-8
 
 import os
-from unittest.mock import sentinel, call
 
 import pytest
 
 from rerwatcher.app import RerWatcher
-from tests.conftest import CONFIG
 
 
 def test_rerwatcher_load_config(mocker):
@@ -19,39 +17,26 @@ def test_rerwatcher_load_config(mocker):
     assert config['device']['type'] == 'console'
 
 
-def test_rerwatcher_workflow(mocker, mock_config):
+def test_rerwatcher_workflow(mocker, mock_config, capsys):
+    messages = [
+        ['TEST: 1min', 'TEST: 1h'],
+        ['TEST: 2min', 'TEST: 2h'],
+    ]
     sleep = mocker.patch(
         'rerwatcher.app.time.sleep',
         side_effect=[True, KeyboardInterrupt]
     )
-    display = mocker.Mock()
-    display_builder = mocker.patch(
-        'rerwatcher.app.DisplayDeviceFactory.build',
-        return_value=display
-    )
-    api = mocker.patch(
-        'rerwatcher.app.TransilienApi',
-        **{'return_value.fetch_data.return_value': sentinel.data}
-    )
-    formatter = mocker.patch(
-        'rerwatcher.app.TransilienApiFormatter.format_response',
-        return_value=[sentinel.timetable1, sentinel.timetable2]
+    fetch_data = mocker.patch(
+        'rerwatcher.app.Transilien.fetch_data',
+        side_effect=messages
     )
 
     app = RerWatcher(None)
     with pytest.raises(KeyboardInterrupt):
         app._app.start()
 
-    display_builder.assert_called_once_with(CONFIG['device'])
-    api.assert_called_once_with(CONFIG['api'])
-    assert 2 == api().fetch_data.call_count
-    expected_formatter_calls = [
-        call(response=sentinel.data), call(response=sentinel.data)
-    ]
-    assert expected_formatter_calls == formatter.call_args_list
-    expected_display_calls = [
-        call(messages=[sentinel.timetable1, sentinel.timetable2]),
-        call(messages=[sentinel.timetable1, sentinel.timetable2]),
-    ]
-    assert expected_display_calls == display.print.call_args_list
+    expected = '\n'.join([m for msgs in messages for m in msgs]) + '\n'
+    captured = capsys.readouterr()
+    assert expected == captured.out
+    assert 2 == fetch_data.call_count
     assert 2 == sleep.call_count

@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# coding: utf-8
-
 import pytest
 import requests
 from loguru import logger
@@ -11,9 +8,7 @@ logger.disable('rerwatcher')
 
 CONFIG = {
     'api': {
-        'url': 'https://test.url/${departure_station}/d/${arrival_station}',
-        'departure_station': 123,
-        'arrival_station': 321,
+        'url': 'https://test.url/00000000/d/00000000',
         'user': 'user',
         'password': 'password',
     },
@@ -26,6 +21,11 @@ CONFIG = {
         'type': 'console',
     },
 }
+
+
+@pytest.fixture(scope='module')
+def config():
+    return CONFIG
 
 
 @pytest.fixture(scope='function')

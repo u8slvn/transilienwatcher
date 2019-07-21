@@ -1,29 +1,25 @@
-#!/usr/bin/env python3
-# coding: utf-8
-
 import pytest
 
-from rerwatcher import display
-from rerwatcher.formatter import TimeTable
-from tests.conftest import CONFIG
+from rerwatcher.display import (LCD, Console, DisplayDeviceFactory,
+                                DisplayTypeNotSupportedError)
 
 
 class TestLCDDisplay:
     def test_print_on_lcd(self, mocker):
-        lcd = mocker.patch('rerwatcher.display.CharLCD')
-        messages = [mocker.Mock(**{'text.return_value': 'foo'})]
-        matrix = display.LCD()
+        charlcd = mocker.patch('rerwatcher.display.CharLCD')
+        messages = ['foo']
+        lcd = LCD()
 
-        matrix.print(messages)
+        lcd.print(messages)
 
-        assert (1, 0) == lcd().cursor_pos
-        lcd().write_string.assert_called_once_with('foo')
+        assert (1, 0) == charlcd().cursor_pos
+        charlcd().write_string.assert_called_once_with('foo')
 
 
 class TestConsoleDisplay:
     def test_print_on_console(self, capsys):
-        messages = [TimeTable(miss='TEST', time='12min')]
-        console = display.Console()
+        messages = ['TEST: 12min']
+        console = Console()
 
         console.print(messages)
 
@@ -32,23 +28,21 @@ class TestConsoleDisplay:
 
 
 class TestDisplayDeviceFactory:
-    def test_device_builder_console_display(self):
-        CONFIG['device']['type'] = 'console'
+    def test_device_builder_console_display(self, config):
+        device = DisplayDeviceFactory.build(config['device'])
 
-        device = display.DisplayDeviceFactory.build(CONFIG['device'])
+        assert isinstance(device, Console)
 
-        assert isinstance(device, display.Console)
-
-    def test_device_builder_matrix_display(self, mocker):
+    def test_device_builder_matrix_display(self, mocker, config):
         mocker.patch('rerwatcher.display.CharLCD')
-        CONFIG['device']['type'] = 'lcd'
+        config['device']['type'] = 'lcd'
 
-        device = display.DisplayDeviceFactory.build(CONFIG['device'])
+        device = DisplayDeviceFactory.build(config['device'])
 
-        assert isinstance(device, display.LCD)
+        assert isinstance(device, LCD)
 
-    def test_device_builder_fail(self):
-        CONFIG['device']['type'] = 'foo'
+    def test_device_builder_fail(self, config):
+        config['device']['type'] = 'foo'
 
-        with pytest.raises(display.DisplayTypeNotSupportedError):
-            display.DisplayDeviceFactory.build(CONFIG['device'])
+        with pytest.raises(DisplayTypeNotSupportedError):
+            DisplayDeviceFactory.build(config['device'])
