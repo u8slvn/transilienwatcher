@@ -5,7 +5,8 @@ from loguru import logger
 from lxml import etree
 from requests.auth import HTTPBasicAuth
 
-from rerwatcher.exceptions import request_error_handler, format_error_handler
+from rerwatcher.exceptions import (request_error_handler, format_error_handler,
+                                   RequestError, fetch_data_error_handler)
 
 
 class Requester:
@@ -20,6 +21,11 @@ class Requester:
     def request(self):
         logger.info(f"Fetching data from {self._url}.")
         response = requests.get(url=self._url, auth=self._auth)
+
+        if response.status_code != 200:
+            logger.error("Request failed.")
+            raise RequestError(f"HTTP: {response.status_code} error")
+
         return response.text
 
 
@@ -65,6 +71,7 @@ class Transilien:
         self.requester = Requester(config)
         self.formatter = Formatter()
 
+    @fetch_data_error_handler
     def fetch_data(self):
         data = self.requester.request()
         data = self.formatter.format(data=data)

@@ -1,7 +1,7 @@
 import functools
 
 from loguru import logger
-from requests import RequestException, ReadTimeout, HTTPError
+from requests import RequestException, ReadTimeout
 
 
 class TransilienError(Exception):
@@ -21,13 +21,9 @@ def request_error_handler(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except HTTPError as err:
-            logger.error("Request failed.")
-            status = err.response.status_code if err.response else "unknown"
-            raise RequestError(f"HTTP: {status} error")
         except (RequestException, ReadTimeout):
             logger.error("Request failed.")
-            raise RequestError(f"HTTP: unknown Error")
+            raise RequestError("HTTP: unknown error")
 
     return wrapper
 
@@ -39,6 +35,19 @@ def format_error_handler(func):
             return func(*args, **kwargs)
         except Exception:
             logger.error("Format failed.")
-            raise FormatError(f"FORMAT: error")
+            raise FormatError("FORMAT: unknown error")
+
+    return wrapper
+
+
+def fetch_data_error_handler(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except (RequestError, FormatError) as error:
+            return [str(error)]
+        except Exception:
+            raise
 
     return wrapper
