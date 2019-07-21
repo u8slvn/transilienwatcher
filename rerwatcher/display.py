@@ -10,7 +10,7 @@ class DisplayTypeNotSupportedError(NotImplementedError):
 class DisplayDevice(ABC):
     @abstractmethod
     def print(self, messages):
-        pass
+        raise NotImplementedError
 
 
 class ConsoleDisplay(DisplayDevice):
