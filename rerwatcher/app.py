@@ -8,6 +8,7 @@ from rerwatcher.api import TransilienApi
 from rerwatcher.daemon import Daemon
 from rerwatcher.display import DisplayDeviceFactory
 from rerwatcher.formatter import TransilienApiFormatter
+from rerwatcher.utils import overwrite_config_with_env
 
 
 class RerWatcher(Daemon):
@@ -16,8 +17,8 @@ class RerWatcher(Daemon):
         super(RerWatcher, self).__init__(app_name=app_name, *args, **kwargs)
 
         config = RerWatcher.load_config()
-        matrix_display = DisplayDeviceFactory.build(config)
-        transilien_api = TransilienApi(config)
+        matrix_display = DisplayDeviceFactory.build(config['device'])
+        transilien_api = TransilienApi(config['api'])
         transilien_formatter = TransilienApiFormatter()
 
         self._app = _App(
@@ -31,14 +32,7 @@ class RerWatcher(Daemon):
     def load_config():
         with open('config.yml', 'r') as ymlconf:
             config = yaml.load(ymlconf, Loader=yaml.FullLoader)
-
-        for section in config:
-            for param in config[section]:
-                env_key = f"{section}_{param}".upper()
-                default_value = config[section][param]
-
-                config[section][param] = os.environ.get(env_key, default_value)
-
+        config = overwrite_config_with_env(config)
         return config
 
     def run(self):

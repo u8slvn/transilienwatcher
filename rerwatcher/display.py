@@ -13,13 +13,13 @@ class DisplayDevice(ABC):
         raise NotImplementedError
 
 
-class ConsoleDisplay(DisplayDevice):
+class Console(DisplayDevice):
     def print(self, messages):
         for message in messages:
             print(message.text())
 
 
-class LCDDisplay(DisplayDevice):
+class LCD(DisplayDevice):
     def __init__(self):
         self._device = CharLCD('PCF8574', 0x27)
 
@@ -33,9 +33,9 @@ class DisplayDeviceFactory(ABC):
     @staticmethod
     def build(config: dict):
         display = {
-            'lcd': LCDDisplay,
-            'console': ConsoleDisplay,
-        }.get(config['device']['type'])
+            'lcd': LCD,
+            'console': Console,
+        }.get(config['type'])
 
         if not display:
             raise DisplayTypeNotSupportedError

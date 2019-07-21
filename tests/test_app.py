@@ -2,17 +2,18 @@
 # coding: utf-8
 
 import os
-from unittest.mock import patch, sentinel, call
+from unittest.mock import sentinel, call
 
 import pytest
 
 from rerwatcher.app import RerWatcher
-from tests.conftest import FAKE_CONFIG
+from tests.conftest import CONFIG
 
 
-def test_rerwatcher_load_config():
-    with patch.dict(os.environ, {'API_URL': 'http://test.url'}):
-        config = RerWatcher.load_config()
+def test_rerwatcher_load_config(mocker):
+    mocker.patch.dict(os.environ, {'API__URL': 'http://test.url'})
+
+    config = RerWatcher.load_config()
 
     assert config['api']['url'] == 'http://test.url'
     assert config['device']['type'] == 'console'
@@ -41,8 +42,8 @@ def test_rerwatcher_workflow(mocker, mock_config):
     with pytest.raises(KeyboardInterrupt):
         app._app.start()
 
-    display_builder.assert_called_once_with(FAKE_CONFIG)
-    api.assert_called_once_with(FAKE_CONFIG)
+    display_builder.assert_called_once_with(CONFIG['device'])
+    api.assert_called_once_with(CONFIG['api'])
     assert 2 == api().fetch_data.call_count
     expected_formatter_calls = [
         call(response=sentinel.data), call(response=sentinel.data)

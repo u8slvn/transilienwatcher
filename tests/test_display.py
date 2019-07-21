@@ -5,14 +5,14 @@ import pytest
 
 from rerwatcher import display
 from rerwatcher.formatter import TimeTable
-from tests.conftest import FAKE_CONFIG
+from tests.conftest import CONFIG
 
 
 class TestLCDDisplay:
     def test_print_on_lcd(self, mocker):
         lcd = mocker.patch('rerwatcher.display.CharLCD')
         messages = [mocker.Mock(**{'text.return_value': 'foo'})]
-        matrix = display.LCDDisplay()
+        matrix = display.LCD()
 
         matrix.print(messages)
 
@@ -23,7 +23,7 @@ class TestLCDDisplay:
 class TestConsoleDisplay:
     def test_print_on_console(self, capsys):
         messages = [TimeTable(miss='TEST', time='12min')]
-        console = display.ConsoleDisplay()
+        console = display.Console()
 
         console.print(messages)
 
@@ -33,22 +33,22 @@ class TestConsoleDisplay:
 
 class TestDisplayDeviceFactory:
     def test_device_builder_console_display(self):
-        FAKE_CONFIG['device']['type'] = 'console'
+        CONFIG['device']['type'] = 'console'
 
-        device = display.DisplayDeviceFactory.build(FAKE_CONFIG)
+        device = display.DisplayDeviceFactory.build(CONFIG['device'])
 
-        assert isinstance(device, display.ConsoleDisplay)
+        assert isinstance(device, display.Console)
 
     def test_device_builder_matrix_display(self, mocker):
         mocker.patch('rerwatcher.display.CharLCD')
-        FAKE_CONFIG['device']['type'] = 'lcd'
+        CONFIG['device']['type'] = 'lcd'
 
-        device = display.DisplayDeviceFactory.build(FAKE_CONFIG)
+        device = display.DisplayDeviceFactory.build(CONFIG['device'])
 
-        assert isinstance(device, display.LCDDisplay)
+        assert isinstance(device, display.LCD)
 
     def test_device_builder_fail(self):
-        FAKE_CONFIG['device']['type'] = 'foo'
+        CONFIG['device']['type'] = 'foo'
 
         with pytest.raises(display.DisplayTypeNotSupportedError):
-            display.DisplayDeviceFactory.build(FAKE_CONFIG)
+            display.DisplayDeviceFactory.build(CONFIG['device'])

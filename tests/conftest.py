@@ -9,7 +9,7 @@ from rerwatcher.app import RerWatcher
 
 logger.disable('rerwatcher')
 
-FAKE_CONFIG = {
+CONFIG = {
     'api': {
         'url': 'https://test.url/${departure_station}/d/${arrival_station}',
         'departure_station': 123,
@@ -31,7 +31,7 @@ FAKE_CONFIG = {
 @pytest.fixture(scope='function')
 def mock_config(monkeypatch):
     def load_config():
-        return FAKE_CONFIG
+        return CONFIG
 
     monkeypatch.setattr(RerWatcher, 'load_config', load_config)
 

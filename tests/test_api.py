@@ -4,7 +4,7 @@ from freezegun import freeze_time
 from requests.auth import HTTPBasicAuth
 
 from rerwatcher.api import TransilienApi
-from tests.conftest import FAKE_CONFIG
+from tests.conftest import CONFIG
 
 
 def load_fixture(fake_config):
@@ -16,18 +16,19 @@ def load_fixture(fake_config):
 
 class TestTransilienApiDriver:
     def test_init(self):
-        api = TransilienApi(FAKE_CONFIG)
+        api_config = CONFIG['api']
+        api = TransilienApi(api_config)
 
-        assert api._url == Template(FAKE_CONFIG['api']['url']).substitute(
-            departure_station=FAKE_CONFIG['api']['departure_station'],
-            arrival_station=FAKE_CONFIG['api']['arrival_station'],
+        assert api._url == Template(api_config['url']).substitute(
+            departure_station=api_config['departure_station'],
+            arrival_station=api_config['arrival_station'],
         )
         assert isinstance(api._auth, HTTPBasicAuth)
 
     @freeze_time("27-10-2018 13:30")
     def test_fetch_data_return_two_timetables(self, mocker):
         requests = mocker.patch('rerwatcher.api.requests')
-        api = TransilienApi(FAKE_CONFIG)
+        api = TransilienApi(CONFIG['api'])
 
         api.fetch_data()
 

@@ -8,14 +8,14 @@ from requests.auth import HTTPBasicAuth
 
 class TransilienApi:
     def __init__(self, config):
-        url_template = Template(config['api']['url'])
+        url_template = Template(config['url'])
         self._url = url_template.substitute(
-            departure_station=config['api']['departure_station'],
-            arrival_station=config['api']['arrival_station']
+            departure_station=config['departure_station'],
+            arrival_station=config['arrival_station']
         )
         self._auth = HTTPBasicAuth(
-            username=config['api']['user'],
-            password=config['api']['password']
+            username=config['user'],
+            password=config['password']
         )
 
     def fetch_data(self):
