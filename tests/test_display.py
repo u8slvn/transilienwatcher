@@ -8,13 +8,14 @@ from tests.conftest import FAKE_CONFIG
 
 
 class TestLCDDisplay:
-    def test_print_on_matrix(self, mocker):
+    def test_print_on_lcd(self, mocker):
         lcd = mocker.patch('rerwatcher.display.CharLCD')
         messages = [mocker.Mock(**{'text.return_value': 'foo'})]
         matrix = display.LCDDisplay()
 
         matrix.print(messages)
 
+        assert (1, 0) == lcd().cursor_pos
         lcd().write_string.assert_called_once_with('foo')
 
 
