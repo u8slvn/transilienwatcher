@@ -3,8 +3,9 @@ from datetime import datetime, timedelta
 import requests
 from loguru import logger
 from lxml import etree
-from requests import RequestException, ReadTimeout
 from requests.auth import HTTPBasicAuth
+
+from rerwatcher.exceptions import request_error_handler, format_error_handler
 
 
 class Requester:
@@ -15,14 +16,10 @@ class Requester:
             password=config['password']
         )
 
+    @request_error_handler
     def request(self):
-        try:
-            logger.info(f"Fetching data from {self._url}.")
-            response = requests.get(url=self._url, auth=self._auth)
-        except (RequestException, ReadTimeout):
-            logger.error(f"Fetching {self._url} failed.")
-            raise
-
+        logger.info(f"Fetching data from {self._url}.")
+        response = requests.get(url=self._url, auth=self._auth)
         return response.text
 
 
@@ -30,9 +27,12 @@ class Formatter:
     encoding = 'utf-8'
     date_format = '%d/%m/%Y %H:%M'
 
+    @format_error_handler
     def format(self, data: str, limit: int = 2):
-        response_body = data.encode(self.encoding)
-        tree = etree.fromstring(response_body)
+        data = data.encode(self.encoding)
+        logger.info(f"Formatting data {data or 'None'}.")
+
+        tree = etree.fromstring(data)
         trains = tree.xpath('/passages/train')
 
         timetables = [self._format_train(train) for train in trains[:limit]]

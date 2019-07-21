@@ -1,17 +1,20 @@
 from unittest.mock import sentinel
 
+import pytest
 from freezegun import freeze_time
+from requests import HTTPError, RequestException
 from requests.auth import HTTPBasicAuth
 
+from rerwatcher.exceptions import RequestError, FormatError
 from rerwatcher.transilien import Requester, Formatter, Transilien
 
 
 class TestRequester:
     def test_request(self, mocker, config):
         requests = mocker.patch('rerwatcher.transilien.requests.get')
-        rrequester = Requester(config['api'])
+        requester = Requester(config['api'])
 
-        rrequester.request()
+        requester.request()
 
         url = config['api']['url']
         auth = HTTPBasicAuth(
@@ -19,6 +22,17 @@ class TestRequester:
             password=config['api']['password']
         )
         requests.assert_called_once_with(url=url, auth=auth)
+
+    @pytest.mark.parametrize('exception', [HTTPError, RequestException])
+    def test_request_fails(self, mocker, config, exception):
+        mocker.patch(
+            'rerwatcher.transilien.requests.get',
+            side_effect=exception
+        )
+        requester = Requester(config['api'])
+
+        with pytest.raises(RequestError):
+            requester.request()
 
 
 class TestFormatter:
@@ -29,6 +43,16 @@ class TestFormatter:
         result = formatter.format(requests_fixture)
 
         assert ['DACA: 6min', 'FACA: 3h'] == result
+
+    def test_format_fails(self, mocker):
+        mocker.patch(
+            'rerwatcher.transilien.etree.fromstring',
+            side_effect=Exception
+        )
+        formatter = Formatter()
+
+        with pytest.raises(FormatError):
+            formatter.format()
 
 
 class TestTransilien:
