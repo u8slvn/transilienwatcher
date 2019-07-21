@@ -20,7 +20,6 @@ class TransilienApi:
 
     def fetch_data(self):
         data = None
-
         try:
             logger.info(f"Fetching data from {self._url}.")
             response = requests.get(url=self._url, auth=self._auth)

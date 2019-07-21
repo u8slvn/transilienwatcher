@@ -4,6 +4,7 @@
 import pytest
 
 from rerwatcher import display
+from rerwatcher.formatter import TimeTable
 from tests.conftest import FAKE_CONFIG
 
 
@@ -20,14 +21,14 @@ class TestLCDDisplay:
 
 
 class TestConsoleDisplay:
-    def test_print_on_console(self, mocker):
-        bi_print = mocker.patch('builtins.print')
-        messages = [mocker.Mock(**{'text.return_value': 'foo'})]
+    def test_print_on_console(self, capsys):
+        messages = [TimeTable(miss='TEST', time='12min')]
         console = display.ConsoleDisplay()
 
         console.print(messages)
 
-        bi_print.assert_called_with('foo')
+        captured = capsys.readouterr()
+        assert 'TEST: 12min\n' == captured.out
 
 
 class TestDisplayDeviceFactory:
