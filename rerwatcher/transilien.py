@@ -34,20 +34,20 @@ class Formatter:
         response_body = data.encode(self.encoding)
         tree = etree.fromstring(response_body)
         trains = tree.xpath('/passages/train')
-        timetables = []
 
-        for train in trains[:limit]:
-            miss = train.find('miss').text
-            date = train.find('date').text
-
-            date = datetime.strptime(date, self.date_format)
-            time_delta = date - datetime.now()
-
-            time = self._format_timedelta(time_delta=time_delta)
-            timetable = f'{miss}: {time}'
-            timetables.append(timetable)
-
+        timetables = [self._format_train(train) for train in trains[:limit]]
         return timetables
+
+    def _format_train(self, train):
+        miss = train.find('miss').text
+        date = train.find('date').text
+
+        date = datetime.strptime(date, self.date_format)
+        time_delta = date - datetime.now()
+
+        time = self._format_timedelta(time_delta=time_delta)
+        timetable = f'{miss}: {time}'
+        return timetable
 
     @staticmethod
     def _format_timedelta(time_delta: timedelta):
