@@ -9,3 +9,4 @@ htmlcov/
 \~/
 settings.env
 log
+test_pid
