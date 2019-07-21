@@ -1,5 +1,5 @@
 requests==2.20.0
 lxml==4.2.1
-luma.led-matrix==1.4.0
+RPLCD==1.2.2
 pyyaml>=4.2b1
 loguru==0.3.0

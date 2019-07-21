@@ -7,16 +7,15 @@ from rerwatcher import display
 from tests.conftest import FAKE_CONFIG
 
 
-class TestMatrixDisplay:
-    def test_print_on_matrix(self, mocker, mock_luma):
+class TestLCDDisplay:
+    def test_print_on_matrix(self, mocker):
+        lcd = mocker.patch('rerwatcher.display.CharLCD')
         messages = [mocker.Mock(**{'text.return_value': 'foo'})]
-        matrix = display.MatrixDisplay()
-        *_, text, _, canvas = mock_luma
+        matrix = display.LCDDisplay()
 
         matrix.print(messages)
 
-        canvas.assert_called_once()
-        text.assert_called_once()
+        lcd().write_string.assert_called_once_with('foo')
 
 
 class TestConsoleDisplay:
@@ -38,12 +37,13 @@ class TestDisplayDeviceFactory:
 
         assert isinstance(device, display.ConsoleDisplay)
 
-    def test_device_builder_matrix_display(self, mock_luma):
-        FAKE_CONFIG['device']['type'] = 'matrix'
+    def test_device_builder_matrix_display(self, mocker):
+        mocker.patch('rerwatcher.display.CharLCD')
+        FAKE_CONFIG['device']['type'] = 'lcd'
 
         device = display.DisplayDeviceFactory.build(FAKE_CONFIG)
 
-        assert isinstance(device, display.MatrixDisplay)
+        assert isinstance(device, display.LCDDisplay)
 
     def test_device_builder_fail(self):
         FAKE_CONFIG['device']['type'] = 'foo'

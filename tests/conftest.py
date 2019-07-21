@@ -48,14 +48,3 @@ def mock_requests(monkeypatch, requests_fixture):
         return requests_fixture
 
     monkeypatch.setattr(requests, 'get', get)
-
-
-@pytest.fixture(scope='function')
-def mock_luma(mocker):
-    serial = mocker.patch('rerwatcher.display.serial')
-    device = mocker.patch('rerwatcher.display.device')
-    text = mocker.patch('rerwatcher.display.text')
-    font = mocker.patch('rerwatcher.display.font')
-    canvas = mocker.patch('rerwatcher.display.canvas')
-
-    return serial, device, text, font, canvas
