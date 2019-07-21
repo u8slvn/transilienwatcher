@@ -23,21 +23,13 @@ class Daemon(ABC):
         if self._is_running():
             raise RuntimeError(f"{self.app_name} is already Running.")
 
-        try:
-            if os.fork() > 0:
-                raise SystemExit(0)
-        except OSError:
-            raise RuntimeError("Fork #1 failed.")
+        self.fork_os()
 
         os.chdir('/')
         os.umask(0)
         os.setsid()
 
-        try:
-            if os.fork() > 0:
-                raise SystemExit(0)
-        except OSError:
-            raise RuntimeError("Fork #2 failed.")
+        self.fork_os()
 
         sys.stdout.flush()
         sys.stderr.flush()
@@ -58,6 +50,14 @@ class Daemon(ABC):
             raise SystemExit(1)
 
         signal.signal(signal.SIGTERM, sigterm_handler)
+
+    @staticmethod
+    def fork_os():
+        try:
+            if os.fork() > 0:
+                raise SystemExit(0)
+        except OSError:
+            raise RuntimeError("Fork failed.")
 
     def _is_running(self):
         return os.path.exists(self.pidfile)

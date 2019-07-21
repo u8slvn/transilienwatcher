@@ -41,25 +41,13 @@ def test_daemon(mocker, capsys):
 
 
 def test_daemon_do_not_start_if_os_fork_fails(mocker):
-    mocker.patch('rerwatcher.daemon.os', **{
-        'path.exists.return_value': False,
-        'fork.return_value': 1,
-    })
+    mocker.patch('rerwatcher.daemon.os.fork', side_effect=[1, OSError])
     daemon_app = DaemonApp()
 
     with pytest.raises(SystemExit):
-        daemon_app.start()
-
-
-def test_daemon_do_not_start_if_os_fork2_fails(mocker):
-    mocker.patch('rerwatcher.daemon.os', **{
-        'path.exists.return_value': False,
-        'fork.side_effect': [0, 1],
-    })
-    daemon_app = DaemonApp()
-
-    with pytest.raises(SystemExit):
-        daemon_app.start()
+        daemon_app.fork_os()
+    with pytest.raises(RuntimeError):
+        daemon_app.fork_os()
 
 
 def test_daemon_do_not_start_if_already_running(mocker):
