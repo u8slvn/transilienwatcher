@@ -9,12 +9,12 @@ from rerwatcher.app import RerWatcher
 
 
 def test_rerwatcher_load_config(mocker):
-    mocker.patch.dict(os.environ, {'API__URL': 'http://test.url'})
+    mocker.patch.dict(os.environ, {'TRANSILIEN__URL': 'http://test.url'})
 
     config = RerWatcher.load_config()
 
-    assert config['api']['url'] == 'http://test.url'
-    assert config['device']['type'] == 'console'
+    assert config['transilien']['url'] == 'http://test.url'
+    assert config['display']['type'] == 'console'
 
 
 def test_rerwatcher_workflow(mocker, mock_config, capsys):

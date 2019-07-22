@@ -10,11 +10,11 @@ from rerwatcher.exceptions import (request_error_handler, format_error_handler,
 
 
 class Requester:
-    def __init__(self, config: dict):
-        self._url = config['url']
+    def __init__(self, url: str, username: str, password: str):
+        self._url = url
         self._auth = HTTPBasicAuth(
-            username=config['user'],
-            password=config['password']
+            username=username,
+            password=password
         )
 
     @request_error_handler
@@ -67,8 +67,8 @@ class Formatter:
 
 
 class Transilien:
-    def __init__(self, config):
-        self.requester = Requester(config)
+    def __init__(self, config: dict):
+        self.requester = Requester(**config)
         self.formatter = Formatter()
 
     @fetch_data_error_handler

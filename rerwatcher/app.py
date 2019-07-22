@@ -5,7 +5,7 @@ from loguru import logger
 
 from rerwatcher.transilien import Transilien
 from rerwatcher.daemon import Daemon
-from rerwatcher.display import DisplayDeviceFactory
+from rerwatcher.display import DisplayBuilder
 from rerwatcher.utils import overwrite_config_with_env
 
 
@@ -15,12 +15,12 @@ class RerWatcher(Daemon):
         super().__init__(app_name=app_name, *args, **kwargs)
 
         config = RerWatcher.load_config()
-        matrix_display = DisplayDeviceFactory.build(config['device'])
-        transilien = Transilien(config['api'])
+        display = DisplayBuilder.build(config['display'])
+        transilien = Transilien(config['transilien'])
 
         self._app = _App(
             config=config,
-            display=matrix_display,
+            display=display,
             transilien=transilien,
         )
 
@@ -41,7 +41,7 @@ class _App:
         self.is_running = False
         self.transilien = transilien
         self.display = display
-        self._refresh_time = config['refresh_time']['default']
+        self._refresh_time = config['refresh_time']
 
     def start(self):
         self.is_running = True

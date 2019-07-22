@@ -11,6 +11,7 @@ from rerwatcher.transilien import Requester, Formatter, Transilien
 
 class TestRequester:
     def test_request(self, mocker, config):
+        config = config['transilien']
         response = mocker.Mock()
         response.status_code = 200
         response.text = 'foo'
@@ -18,14 +19,14 @@ class TestRequester:
             'rerwatcher.transilien.requests.get',
             return_value=response
         )
-        requester = Requester(config['api'])
+        requester = Requester(**config)
 
         result = requester.request()
 
-        url = config['api']['url']
+        url = config['url']
         auth = HTTPBasicAuth(
-            username=config['api']['user'],
-            password=config['api']['password']
+            username=config['username'],
+            password=config['password']
         )
         requests.assert_called_once_with(url=url, auth=auth)
         assert 'foo' == result
@@ -37,7 +38,7 @@ class TestRequester:
             'rerwatcher.transilien.requests.get',
             return_value=response
         )
-        requester = Requester(config['api'])
+        requester = Requester(**config['transilien'])
 
         with pytest.raises(RequestError):
             requester.request()
@@ -48,7 +49,7 @@ class TestRequester:
             'rerwatcher.transilien.requests.get',
             side_effect=exception
         )
-        requester = Requester(config['api'])
+        requester = Requester(**config['transilien'])
 
         with pytest.raises(RequestError):
             requester.request()
@@ -92,7 +93,7 @@ class TestTransilien:
             'rerwatcher.transilien.Formatter.format',
             return_value=sentinel.data
         )
-        transilien = Transilien(config['api'])
+        transilien = Transilien(config['transilien'])
 
         result = transilien.fetch_data()
 
@@ -105,7 +106,7 @@ class TestTransilien:
             side_effect=RequestException
         )
         formatter = mocker.patch('rerwatcher.transilien.Formatter.format')
-        transilien = Transilien(config['api'])
+        transilien = Transilien(config['transilien'])
 
         result = transilien.fetch_data()
 
@@ -121,7 +122,7 @@ class TestTransilien:
             'rerwatcher.transilien.etree.fromstring',
             side_effect=Exception
         )
-        transilien = Transilien(config['api'])
+        transilien = Transilien(config['transilien'])
 
         result = transilien.fetch_data()
 
@@ -132,7 +133,7 @@ class TestTransilien:
             'rerwatcher.transilien.Requester.request',
             side_effect=Exception
         )
-        transilien = Transilien(config['api'])
+        transilien = Transilien(config['transilien'])
 
         with pytest.raises(Exception):
             transilien.fetch_data()

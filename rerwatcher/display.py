@@ -3,23 +3,23 @@ from abc import abstractmethod, ABC
 from RPLCD import CharLCD
 
 
-class DisplayTypeNotSupportedError(NotImplementedError):
+class UnknownDisplayTypeError(NotImplementedError):
     pass
 
 
-class DisplayDevice(ABC):
+class Display(ABC):
     @abstractmethod
     def print(self, messages):
         raise NotImplementedError
 
 
-class Console(DisplayDevice):
+class Console(Display):
     def print(self, messages):
         for message in messages:
             print(message)
 
 
-class LCD(DisplayDevice):
+class LCD(Display):
     def __init__(self):
         self._device = CharLCD('PCF8574', 0x27)
 
@@ -29,7 +29,7 @@ class LCD(DisplayDevice):
             self._device.write_string(message)
 
 
-class DisplayDeviceFactory(ABC):
+class DisplayBuilder(ABC):
     @staticmethod
     def build(config: dict):
         display = {
@@ -38,6 +38,6 @@ class DisplayDeviceFactory(ABC):
         }.get(config['type'])
 
         if not display:
-            raise DisplayTypeNotSupportedError
+            raise UnknownDisplayTypeError
 
         return display()

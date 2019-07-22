@@ -1,12 +1,9 @@
-api:
+transilien:
   url: https://api.transilien.com/gare/00000000/depart/00000000
-  user: user
+  username: username
   password: password
 
-refresh_time:
-  default: 10
-  step: 10
-  max: 30
+refresh_time: 10
 
-device:
+display:
   type: console

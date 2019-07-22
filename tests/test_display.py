@@ -1,7 +1,7 @@
 import pytest
 
-from rerwatcher.display import (LCD, Console, DisplayDeviceFactory,
-                                DisplayTypeNotSupportedError)
+from rerwatcher.display import (LCD, Console, DisplayBuilder,
+                                UnknownDisplayTypeError)
 
 
 class TestLCDDisplay:
@@ -27,22 +27,22 @@ class TestConsoleDisplay:
         assert 'TEST: 12min\n' == captured.out
 
 
-class TestDisplayDeviceFactory:
-    def test_device_builder_console_display(self, config):
-        device = DisplayDeviceFactory.build(config['device'])
+class TestDisplayFactory:
+    def test_display_builder_console(self, config):
+        display = DisplayBuilder.build(config['display'])
 
-        assert isinstance(device, Console)
+        assert isinstance(display, Console)
 
-    def test_device_builder_matrix_display(self, mocker, config):
+    def test_display_builder_lcd(self, mocker, config):
         mocker.patch('rerwatcher.display.CharLCD')
-        config['device']['type'] = 'lcd'
+        config['display']['type'] = 'lcd'
 
-        device = DisplayDeviceFactory.build(config['device'])
+        display = DisplayBuilder.build(config['display'])
 
-        assert isinstance(device, LCD)
+        assert isinstance(display, LCD)
 
-    def test_device_builder_fail(self, config):
-        config['device']['type'] = 'foo'
+    def test_display_builder_fail(self, config):
+        config['display']['type'] = 'foo'
 
-        with pytest.raises(DisplayTypeNotSupportedError):
-            DisplayDeviceFactory.build(config['device'])
+        with pytest.raises(UnknownDisplayTypeError):
+            DisplayBuilder.build(config['display'])

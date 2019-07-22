@@ -7,17 +7,13 @@ from rerwatcher.app import RerWatcher
 logger.disable('rerwatcher')
 
 CONFIG = {
-    'api': {
+    'transilien': {
         'url': 'https://test.url/00000000/d/00000000',
-        'user': 'user',
+        'username': 'username',
         'password': 'password',
     },
-    'refresh_time': {
-        'default': 10,
-        'step': 10,
-        'max': 30,
-    },
-    'device': {
+    'refresh_time': 10,
+    'display': {
         'type': 'console',
     },
 }
