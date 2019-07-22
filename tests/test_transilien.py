@@ -61,7 +61,7 @@ class TestFormatter:
 
         result = formatter.format(requests_fixture)
 
-        assert ['DACA: 6min', 'FACA: 3h'] == result
+        assert ['DACA: 6min', 'FACA: 3h36'] == result
 
     def test_format_fails(self, mocker):
         mocker.patch(

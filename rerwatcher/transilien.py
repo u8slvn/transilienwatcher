@@ -59,10 +59,7 @@ class Formatter:
     def _format_timedelta(time_delta: timedelta):
         hours = time_delta.seconds // 3600
         minutes = (time_delta.seconds // 60) % 60
-        minutes = 1 if minutes < 1 else minutes
-
-        time = f"{minutes}min"
-        time = f"{hours}h" if hours > 1 else time
+        time = f"{hours}h{minutes:02d}" if hours > 1 else f"{minutes}min"
         return time
 
 
