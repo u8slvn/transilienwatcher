@@ -45,14 +45,17 @@ class Formatter:
         return timetables
 
     def _format_train(self, train):
-        miss = train.find('miss').text
+        miss = train.find('miss').text  # Mission code of the train.
         date = train.find('date').text
+        status = train.find('etat')
+
+        status = status if status is None else status.text
 
         date = datetime.strptime(date, self.date_format)
         time_delta = date - datetime.now()
 
         time = self._format_timedelta(time_delta=time_delta)
-        timetable = f'{miss}: {time}'
+        timetable = f'{miss}: {status or time}'
         return timetable
 
     @staticmethod

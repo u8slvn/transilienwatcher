@@ -43,6 +43,12 @@ def requests_fixture():
 
 
 @pytest.fixture(scope='function')
+def requests_fixture_status():
+    with open('tests/fixture_with_status.xml') as file:
+        return file.read()
+
+
+@pytest.fixture(scope='function')
 def mock_requests(monkeypatch, requests_fixture):
     def get():
         return requests_fixture

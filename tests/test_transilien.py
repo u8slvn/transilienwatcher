@@ -63,6 +63,14 @@ class TestFormatter:
 
         assert ['DACA: 6min', 'FACA: 3h36'] == result
 
+    @freeze_time("27-10-2018 20:10")
+    def test_format_with_status(self, requests_fixture_status):
+        formatter = Formatter()
+
+        result = formatter.format(requests_fixture_status)
+
+        assert ['DACA: Retardé', 'FACA: Supprimé'] == result
+
     def test_format_fails(self, mocker):
         mocker.patch(
             'rerwatcher.transilien.etree.fromstring',
