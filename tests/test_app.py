@@ -33,7 +33,7 @@ def test_rerwatcher_workflow(mocker, mock_config, capsys):
 
     app = RerWatcher(None)
     with pytest.raises(KeyboardInterrupt):
-        app._app.start()
+        app.run()
 
     expected = '\n'.join([m for msgs in messages for m in msgs]) + '\n'
     captured = capsys.readouterr()
