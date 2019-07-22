@@ -59,7 +59,7 @@ class Daemon(ABC):
         except OSError:
             raise RuntimeError("Fork failed.")
 
-    def _is_running(self):
+    def _is_running(self) -> bool:
         return os.path.exists(self.pidfile)
 
     def start(self):
@@ -74,6 +74,13 @@ class Daemon(ABC):
         with open(self.pidfile) as f:
             pid = int(f.read())
             os.kill(pid, signal.SIGTERM)
+
+    def status(self):
+        status = [
+            f"{self.app_name} is not running.",
+            f"{self.app_name} is running.",
+        ]
+        print(status[self._is_running()])
 
     @abstractmethod
     def run(self):

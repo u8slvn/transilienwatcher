@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
+import argparse
 import os
-import sys
 
 from loguru import logger
 
@@ -14,20 +14,21 @@ logger.remove()  # Reset default loguru logger.
 logger.add(log_success, rotation='00:00', retention='2 days', level='DEBUG')
 logger.add(log_error, rotation='00:00', retention='2 days', level='ERROR')
 
+
+def parse_operation():
+    choices = ['start', 'stop', 'status']
+    parser = argparse.ArgumentParser(description="RERWatcher")
+    parser.add_argument('operation', type=str, choices=choices)
+    args = parser.parse_args()
+    return args.operation
+
+
 daemon = RerWatcher(
     pidfile='/tmp/rerwatcher.pid',
     stdout=log_success,
     stderr=log_error
 )
 
-if len(sys.argv) != 2:
-    print(f"Usage: {sys.argv[0]} [start|stop].", file=sys.stderr)
-    raise SystemExit(1)
-
-if 'start' == sys.argv[1]:
-    daemon.start()
-elif 'stop' == sys.argv[1]:
-    daemon.stop()
-else:
-    print(f"Unknown command {sys.argv[1]!r}.", file=sys.stderr)
-    raise SystemExit(1)
+operation = parse_operation()
+operation = getattr(daemon, operation)
+operation()

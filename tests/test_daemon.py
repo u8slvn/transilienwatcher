@@ -64,3 +64,20 @@ def test_daemon_do_not_stop_if_not_running(mocker):
 
     with pytest.raises(SystemExit):
         daemon_app.stop()
+
+
+@pytest.mark.parametrize('is_running, expected', [
+    (True, 'TestApp is running.\n'),
+    (False, 'TestApp is not running.\n'),
+])
+def test_daemon_status(mocker, capsys, is_running, expected):
+    mocker.patch(
+        'rerwatcher.daemon.Daemon._is_running',
+        return_value=is_running
+    )
+    daemon_app = DaemonApp()
+
+    daemon_app.status()
+
+    captured = capsys.readouterr()
+    assert expected == captured.out
