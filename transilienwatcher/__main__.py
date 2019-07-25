@@ -7,8 +7,10 @@ from loguru import logger
 
 from transilienwatcher import TransilienWatcher
 
-log_success = f'{os.path.dirname(__file__)}/../log/transilienwatcher.success.log'
-log_error = f'{os.path.dirname(__file__)}/../log/transilienwatcher.error.log'
+base_dir = os.path.dirname(__file__)
+
+log_success = f'{base_dir}/../log/transilienwatcher.success.log'
+log_error = f'{base_dir}/../log/transilienwatcher.error.log'
 
 logger.remove()  # Reset default loguru logger.
 logger.add(log_success, rotation='00:00', retention='2 days', level='DEBUG')

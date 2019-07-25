@@ -105,7 +105,9 @@ class TestTransilien:
             'transilienwatcher.transilien.requests.get',
             side_effect=RequestException
         )
-        formatter = mocker.patch('transilienwatcher.transilien.Formatter.format')
+        formatter = mocker.patch(
+            'transilienwatcher.transilien.Formatter.format'
+        )
         transilien = Transilien(config['transilien'])
 
         result = transilien.fetch_data()
