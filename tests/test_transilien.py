@@ -10,7 +10,7 @@ from transilienwatcher.transilien import Requester, Formatter, Transilien
 
 
 class TestRequester:
-    def test_request(self, mocker, config):
+    def test_request_success(self, mocker, config):
         config = config['transilien']
         response = mocker.Mock()
         response.status_code = 200
@@ -57,7 +57,7 @@ class TestRequester:
 
 class TestFormatter:
     @freeze_time("27-10-2018 20:10")
-    def test_format(self, requests_fixture):
+    def test_format_success(self, requests_fixture):
         formatter = Formatter()
 
         result = formatter.format(requests_fixture)
@@ -84,7 +84,7 @@ class TestFormatter:
 
 
 class TestTransilien:
-    def test_fetch_data(self, mocker, config):
+    def test_fetch_data_success(self, mocker, config):
         mocker.patch(
             'transilienwatcher.transilien.Requester.request',
             return_value=sentinel.raw_data
@@ -128,7 +128,7 @@ class TestTransilien:
 
         assert ["FORMAT: unknown error"] == result
 
-    def test_fetch_data_failst(self, mocker, config):
+    def test_fetch_data_fails(self, mocker, config):
         mocker.patch(
             'transilienwatcher.transilien.Requester.request',
             side_effect=Exception
