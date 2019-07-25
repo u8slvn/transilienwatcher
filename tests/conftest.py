@@ -2,7 +2,7 @@ import pytest
 import requests
 from loguru import logger
 
-from transilienwatcher.app import TransilienWatcher
+from transilienwatcher.configuration import ConfigLoader
 
 logger.disable('transilienwatcher')
 
@@ -26,10 +26,10 @@ def config():
 
 @pytest.fixture(scope='function')
 def mock_config(monkeypatch):
-    def load_config():
+    def load():
         return CONFIG
 
-    monkeypatch.setattr(TransilienWatcher, 'load_config', load_config)
+    monkeypatch.setattr(ConfigLoader, 'load', load)
 
 
 @pytest.fixture(scope='function')

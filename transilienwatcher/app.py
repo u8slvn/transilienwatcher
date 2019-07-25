@@ -1,12 +1,11 @@
 import time
 
-import yaml
 from loguru import logger
 
-from transilienwatcher.transilien import Transilien
+from transilienwatcher.configuration import ConfigLoader
 from transilienwatcher.daemon import Daemon
 from transilienwatcher.display import DisplayBuilder
-from transilienwatcher.utils import overwrite_config_with_env
+from transilienwatcher.transilien import Transilien
 
 
 class TransilienWatcher(Daemon):
@@ -14,7 +13,7 @@ class TransilienWatcher(Daemon):
         app_name = self.__class__.__name__
         super().__init__(app_name=app_name, *args, **kwargs)
 
-        config = TransilienWatcher.load_config()
+        config = ConfigLoader.load()
         display = DisplayBuilder.build(config['display'])
         transilien = Transilien(config['transilien'])
 
@@ -23,13 +22,6 @@ class TransilienWatcher(Daemon):
             display=display,
             transilien=transilien,
         )
-
-    @staticmethod
-    def load_config():
-        with open('config.yml', 'r') as ymlconf:
-            config = yaml.load(ymlconf, Loader=yaml.FullLoader)
-        config = overwrite_config_with_env(config)
-        return config
 
     def run(self):
         logger.info("Starting RERWatcher app...")

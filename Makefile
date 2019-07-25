@@ -12,7 +12,7 @@ tests: ## Run tests.
 	@pytest tests/ -x
 
 coverage: ## Run tests with coverage.
-	@pytest tests/ --cov=rerwatcher
+	@pytest tests/ --cov=transilienwatcher
 
 coverage-html: ## Run tests with html format coverage.
-	@pytest tests/ --cov=rerwatcher --cov-report html
+	@pytest tests/ --cov=transilienwatcher --cov-report html

@@ -8,3 +8,7 @@ class RequestError(TransilienError):
 
 class FormatError(TransilienError):
     pass
+
+
+class ConfigError(Exception):
+    pass

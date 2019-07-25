@@ -1,20 +1,6 @@
-#!/usr/bin/env python3
-# coding: utf-8
-
-import os
-
 import pytest
 
 from transilienwatcher.app import TransilienWatcher
-
-
-def test_rerwatcher_load_config(mocker):
-    mocker.patch.dict(os.environ, {'TRANSILIEN__URL': 'http://test.url'})
-
-    config = TransilienWatcher.load_config()
-
-    assert config['transilien']['url'] == 'http://test.url'
-    assert config['display']['type'] == 'console'
 
 
 def test_rerwatcher_workflow(mocker, mock_config, capsys):
