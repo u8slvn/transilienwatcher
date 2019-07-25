@@ -9,6 +9,6 @@ install:
 before_script:
   flake8 .
 script:
-  pytest tests/ --cov=rerwatcher
+  pytest tests/ --cov=transilienwatcher
 after_script:
   - if [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then coveralls; fi

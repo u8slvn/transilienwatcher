@@ -5,8 +5,8 @@ from loguru import logger
 from lxml import etree
 from requests.auth import HTTPBasicAuth
 
-from rerwatcher.exceptions import (request_error_handler, format_error_handler,
-                                   RequestError, fetch_data_error_handler)
+from transilienwatcher import error_handlers
+from transilienwatcher.exceptions import RequestError
 
 
 class Requester:
@@ -17,7 +17,7 @@ class Requester:
             password=password
         )
 
-    @request_error_handler
+    @error_handlers.request_data
     def request(self):
         logger.info(f"Fetching data from {self._url}.")
         response = requests.get(url=self._url, auth=self._auth)
@@ -33,7 +33,7 @@ class Formatter:
     encoding = 'utf-8'
     date_format = '%d/%m/%Y %H:%M'
 
-    @format_error_handler
+    @error_handlers.format_data
     def format(self, data: str, limit: int = 2):
         data = data.encode(self.encoding)
         logger.info(f"Formatting data {data or 'None'}.")
@@ -71,7 +71,7 @@ class Transilien:
         self.requester = Requester(**config)
         self.formatter = Formatter()
 
-    @fetch_data_error_handler
+    @error_handlers.fetch_data
     def fetch_data(self):
         data = self.requester.request()
         data = self.formatter.format(data=data)

@@ -2,9 +2,9 @@ import pytest
 import requests
 from loguru import logger
 
-from rerwatcher.app import RerWatcher
+from transilienwatcher.app import TransilienWatcher
 
-logger.disable('rerwatcher')
+logger.disable('transilienwatcher')
 
 CONFIG = {
     'transilien': {
@@ -29,7 +29,7 @@ def mock_config(monkeypatch):
     def load_config():
         return CONFIG
 
-    monkeypatch.setattr(RerWatcher, 'load_config', load_config)
+    monkeypatch.setattr(TransilienWatcher, 'load_config', load_config)
 
 
 @pytest.fixture(scope='function')

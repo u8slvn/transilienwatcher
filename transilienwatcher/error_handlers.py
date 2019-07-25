@@ -3,20 +3,11 @@ import functools
 from loguru import logger
 from requests import RequestException, ReadTimeout
 
-
-class TransilienError(Exception):
-    pass
-
-
-class RequestError(TransilienError):
-    pass
+from transilienwatcher.exceptions import FormatError, RequestError, \
+    TransilienError
 
 
-class FormatError(TransilienError):
-    pass
-
-
-def request_error_handler(func):
+def request_data(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
@@ -28,7 +19,7 @@ def request_error_handler(func):
     return wrapper
 
 
-def format_error_handler(func):
+def format_data(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
@@ -40,12 +31,12 @@ def format_error_handler(func):
     return wrapper
 
 
-def fetch_data_error_handler(func):
+def fetch_data(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except (RequestError, FormatError) as error:
+        except TransilienError as error:
             return [str(error)]
         except Exception:
             raise

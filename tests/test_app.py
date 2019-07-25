@@ -5,13 +5,13 @@ import os
 
 import pytest
 
-from rerwatcher.app import RerWatcher
+from transilienwatcher.app import TransilienWatcher
 
 
 def test_rerwatcher_load_config(mocker):
     mocker.patch.dict(os.environ, {'TRANSILIEN__URL': 'http://test.url'})
 
-    config = RerWatcher.load_config()
+    config = TransilienWatcher.load_config()
 
     assert config['transilien']['url'] == 'http://test.url'
     assert config['display']['type'] == 'console'
@@ -23,15 +23,15 @@ def test_rerwatcher_workflow(mocker, mock_config, capsys):
         ['TEST: 2min', 'TEST: 2h'],
     ]
     sleep = mocker.patch(
-        'rerwatcher.app.time.sleep',
+        'transilienwatcher.app.time.sleep',
         side_effect=[True, KeyboardInterrupt]
     )
     fetch_data = mocker.patch(
-        'rerwatcher.app.Transilien.fetch_data',
+        'transilienwatcher.app.Transilien.fetch_data',
         side_effect=messages
     )
 
-    app = RerWatcher(None)
+    app = TransilienWatcher(None)
     with pytest.raises(KeyboardInterrupt):
         app.run()
 

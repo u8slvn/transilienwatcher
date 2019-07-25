@@ -1,12 +1,12 @@
 import pytest
 
-from rerwatcher.display import (LCD, Console, DisplayBuilder,
-                                UnknownDisplayTypeError)
+from transilienwatcher.display import (LCD, Console, DisplayBuilder,
+                                       UnknownDisplayTypeError)
 
 
 class TestLCDDisplay:
     def test_print_on_lcd(self, mocker):
-        charlcd = mocker.patch('rerwatcher.display.CharLCD')
+        charlcd = mocker.patch('transilienwatcher.display.CharLCD')
         messages = ['foo']
         lcd = LCD()
 
@@ -34,7 +34,7 @@ class TestDisplayFactory:
         assert isinstance(display, Console)
 
     def test_display_builder_lcd(self, mocker, config):
-        mocker.patch('rerwatcher.display.CharLCD')
+        mocker.patch('transilienwatcher.display.CharLCD')
         config['display']['type'] = 'lcd'
 
         display = DisplayBuilder.build(config['display'])

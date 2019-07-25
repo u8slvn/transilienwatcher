@@ -3,18 +3,18 @@ import time
 import yaml
 from loguru import logger
 
-from rerwatcher.transilien import Transilien
-from rerwatcher.daemon import Daemon
-from rerwatcher.display import DisplayBuilder
-from rerwatcher.utils import overwrite_config_with_env
+from transilienwatcher.transilien import Transilien
+from transilienwatcher.daemon import Daemon
+from transilienwatcher.display import DisplayBuilder
+from transilienwatcher.utils import overwrite_config_with_env
 
 
-class RerWatcher(Daemon):
+class TransilienWatcher(Daemon):
     def __init__(self, *args, **kwargs):
         app_name = self.__class__.__name__
         super().__init__(app_name=app_name, *args, **kwargs)
 
-        config = RerWatcher.load_config()
+        config = TransilienWatcher.load_config()
         display = DisplayBuilder.build(config['display'])
         transilien = Transilien(config['transilien'])
 

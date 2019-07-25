@@ -5,8 +5,8 @@ from freezegun import freeze_time
 from requests import HTTPError, RequestException
 from requests.auth import HTTPBasicAuth
 
-from rerwatcher.exceptions import RequestError, FormatError
-from rerwatcher.transilien import Requester, Formatter, Transilien
+from transilienwatcher.exceptions import RequestError, FormatError
+from transilienwatcher.transilien import Requester, Formatter, Transilien
 
 
 class TestRequester:
@@ -16,7 +16,7 @@ class TestRequester:
         response.status_code = 200
         response.text = 'foo'
         requests = mocker.patch(
-            'rerwatcher.transilien.requests.get',
+            'transilienwatcher.transilien.requests.get',
             return_value=response
         )
         requester = Requester(**config)
@@ -35,7 +35,7 @@ class TestRequester:
         response = mocker.Mock()
         response.status_code = 403
         mocker.patch(
-            'rerwatcher.transilien.requests.get',
+            'transilienwatcher.transilien.requests.get',
             return_value=response
         )
         requester = Requester(**config['transilien'])
@@ -46,7 +46,7 @@ class TestRequester:
     @pytest.mark.parametrize('exception', [HTTPError, RequestException])
     def test_request_fails(self, mocker, config, exception):
         mocker.patch(
-            'rerwatcher.transilien.requests.get',
+            'transilienwatcher.transilien.requests.get',
             side_effect=exception
         )
         requester = Requester(**config['transilien'])
@@ -74,7 +74,7 @@ class TestFormatter:
 
     def test_format_fails(self, mocker):
         mocker.patch(
-            'rerwatcher.transilien.etree.fromstring',
+            'transilienwatcher.transilien.etree.fromstring',
             side_effect=Exception
         )
         formatter = Formatter()
@@ -86,11 +86,11 @@ class TestFormatter:
 class TestTransilien:
     def test_fetch_data(self, mocker, config):
         mocker.patch(
-            'rerwatcher.transilien.Requester.request',
+            'transilienwatcher.transilien.Requester.request',
             return_value=sentinel.raw_data
         )
         formatter = mocker.patch(
-            'rerwatcher.transilien.Formatter.format',
+            'transilienwatcher.transilien.Formatter.format',
             return_value=sentinel.data
         )
         transilien = Transilien(config['transilien'])
@@ -102,10 +102,10 @@ class TestTransilien:
 
     def test_fetch_data_fails_on_request(self, mocker, config):
         mocker.patch(
-            'rerwatcher.transilien.requests.get',
+            'transilienwatcher.transilien.requests.get',
             side_effect=RequestException
         )
-        formatter = mocker.patch('rerwatcher.transilien.Formatter.format')
+        formatter = mocker.patch('transilienwatcher.transilien.Formatter.format')
         transilien = Transilien(config['transilien'])
 
         result = transilien.fetch_data()
@@ -115,11 +115,11 @@ class TestTransilien:
 
     def test_fetch_data_fails_on_format(self, mocker, config):
         mocker.patch(
-            'rerwatcher.transilien.Requester.request',
+            'transilienwatcher.transilien.Requester.request',
             return_value=sentinel.raw_data
         )
         mocker.patch(
-            'rerwatcher.transilien.etree.fromstring',
+            'transilienwatcher.transilien.etree.fromstring',
             side_effect=Exception
         )
         transilien = Transilien(config['transilien'])
@@ -130,7 +130,7 @@ class TestTransilien:
 
     def test_fetch_data_failst(self, mocker, config):
         mocker.patch(
-            'rerwatcher.transilien.Requester.request',
+            'transilienwatcher.transilien.Requester.request',
             side_effect=Exception
         )
         transilien = Transilien(config['transilien'])
