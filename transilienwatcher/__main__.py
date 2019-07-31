@@ -2,6 +2,7 @@
 # coding: utf-8
 import argparse
 import os
+import tempfile
 
 from loguru import logger
 
@@ -25,8 +26,9 @@ def parse_operation():
     return args.operation
 
 
+pid_path = os.path.join(tempfile.TemporaryFile(), 'transilienwatcher.pid')
 daemon = TransilienWatcher(
-    pidfile='/tmp/transilienwatcher.pid',
+    pidfile=pid_path,
     stdout=log_success,
     stderr=log_error
 )

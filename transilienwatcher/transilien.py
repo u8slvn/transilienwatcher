@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import requests
 from loguru import logger
-from lxml import etree
+from defusedxml import ElementTree as etree
 from requests.auth import HTTPBasicAuth
 
 from transilienwatcher import error_handlers
@@ -39,7 +39,7 @@ class Formatter:
         logger.info(f"Formatting data {data or 'None'}.")
 
         tree = etree.fromstring(data)
-        trains = tree.xpath('/passages/train')
+        trains = tree.findall('.//train')
 
         timetables = [self._format_train(train) for train in trains[:limit]]
         return timetables
