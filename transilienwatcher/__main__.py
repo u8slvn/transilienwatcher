@@ -26,7 +26,7 @@ def parse_operation():
     return args.operation
 
 
-pid_path = os.path.join(tempfile.TemporaryFile(), 'transilienwatcher.pid')
+pid_path = os.path.join(tempfile.gettempdir(), 'transilienwatcher.pid')
 daemon = TransilienWatcher(
     pidfile=pid_path,
     stdout=log_success,

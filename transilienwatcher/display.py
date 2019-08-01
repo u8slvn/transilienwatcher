@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
-import board
 from digitalio import DigitalInOut
 
 
@@ -23,6 +22,8 @@ class Console(Display):
 
 class LCD(Display):
     def __init__(self, columns, rows):
+        import board
+
         rs = DigitalInOut(board.D7)
         en = DigitalInOut(board.D8)
         d4 = DigitalInOut(board.D9)
