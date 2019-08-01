@@ -1,9 +1,15 @@
 transilien:
-  url: https://api.transilien.com/gare/00000000/depart/00000000
-  username: username
-  password: password
+  stations:
+    departure: 00000000
+    arrival: 00000000
+  credentials:
+    username: username
+    password: password
 
 refresh_time: 10
 
 display:
-  type: console
+  type: lcd
+  lcd-config:
+    columns: 16
+    rows: 2

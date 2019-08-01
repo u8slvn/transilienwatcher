@@ -6,9 +6,14 @@ from transilienwatcher.exceptions import ConfigError
 
 default_config = {
     'transilien': {
-        'url': None,
-        'username': None,
-        'password': None,
+        'stations': {
+            'departure': None,
+            'arrival': None,
+        },
+        'credentials': {
+            'username': None,
+            'password': None,
+        },
     },
     'refresh_time': 30,
     'display': {

@@ -12,10 +12,16 @@ logger.disable('transilienwatcher')
 
 CONFIG = {
     'transilien': {
-        'url': 'https://test.url/00000000/d/00000000',
-        'username': 'username',
-        'password': 'password',
+        'stations': {
+            'departure': '00000000',
+            'arrival': None,
+        },
+        'credentials': {
+            'username': 'username',
+            'password': 'password',
+        },
     },
+
     'refresh_time': 10,
     'display': {
         'type': 'console',

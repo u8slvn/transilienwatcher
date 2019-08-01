@@ -11,7 +11,7 @@ from transilienwatcher.transilien import Requester, Formatter, Transilien
 
 class TestRequester:
     def test_request_success(self, mocker, config):
-        config = config['transilien']
+        config = config['transilien']['credentials']
         response = mocker.Mock()
         response.status_code = 200
         response.text = 'foo'
@@ -19,37 +19,38 @@ class TestRequester:
             'transilienwatcher.transilien.requests.get',
             return_value=response
         )
-        requester = Requester(**config)
+        requester = Requester(url='test.url', **config)
 
         result = requester.request()
 
-        url = config['url']
         auth = HTTPBasicAuth(
             username=config['username'],
             password=config['password']
         )
-        requests.assert_called_once_with(url=url, auth=auth)
+        requests.assert_called_once_with(url='test.url', auth=auth)
         assert 'foo' == result
 
     def test_request_fails_if_response_is_not_200(self, mocker, config):
+        config = config['transilien']['credentials']
         response = mocker.Mock()
         response.status_code = 403
         mocker.patch(
             'transilienwatcher.transilien.requests.get',
             return_value=response
         )
-        requester = Requester(**config['transilien'])
+        requester = Requester(url='test.url', **config)
 
         with pytest.raises(RequestError):
             requester.request()
 
     @pytest.mark.parametrize('exception', [HTTPError, RequestException])
     def test_request_fails(self, mocker, config, exception):
+        config = config['transilien']['credentials']
         mocker.patch(
             'transilienwatcher.transilien.requests.get',
             side_effect=exception
         )
-        requester = Requester(**config['transilien'])
+        requester = Requester(url='test.url', **config)
 
         with pytest.raises(RequestError):
             requester.request()
@@ -84,6 +85,24 @@ class TestFormatter:
 
 
 class TestTransilien:
+    @pytest.mark.parametrize('arrival, expected_url', [
+        ('000001', 'https://api.transilien.com/gare/00000000/depart/000001'),
+        (None, 'https://api.transilien.com/gare/00000000/depart/'),
+    ])
+    def test_init(self, mocker, config, arrival, expected_url):
+        requester = mocker.patch('transilienwatcher.transilien.Requester')
+        formatter = mocker.patch('transilienwatcher.transilien.Formatter')
+        config['transilien']['stations']['arrival'] = arrival
+
+        _ = Transilien(config['transilien'])
+
+        requester.assert_called_once_with(
+            url=expected_url,
+            username='username',
+            password='password'
+        )
+        formatter.assert_called_once()
+
     def test_fetch_data_success(self, mocker, config):
         mocker.patch(
             'transilienwatcher.transilien.Requester.request',

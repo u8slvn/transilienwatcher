@@ -67,8 +67,11 @@ class Formatter:
 
 
 class Transilien:
+    url = 'https://api.transilien.com/gare/{dep}/depart/{arr}'
+
     def __init__(self, config: dict):
-        self.requester = Requester(**config)
+        url = self._build_url(**config['stations'])
+        self.requester = Requester(url=url, **config['credentials'])
         self.formatter = Formatter()
 
     @error_handlers.fetch_data
@@ -76,3 +79,6 @@ class Transilien:
         data = self.requester.request()
         data = self.formatter.format(data=data)
         return data
+
+    def _build_url(self, departure: str, arrival: str):
+        return self.url.format(dep=departure, arr=arrival if arrival else '')
