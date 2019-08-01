@@ -13,6 +13,10 @@ default_config = {
     'refresh_time': 30,
     'display': {
         'type': None,
+        'lcd-config': {
+            'columns': 16,
+            'rows': 2,
+        },
     }
 }
 

@@ -1,8 +1,12 @@
+import sys
+from unittest.mock import Mock
+
+from loguru import logger
 import pytest
 import requests
-from loguru import logger
 
-from transilienwatcher.configuration import ConfigLoader
+# Monkeypatch for non Raspberry pi environment.
+sys.modules['board'] = Mock()
 
 logger.disable('transilienwatcher')
 
@@ -15,6 +19,10 @@ CONFIG = {
     'refresh_time': 10,
     'display': {
         'type': 'console',
+        'lcd-config': {
+            'columns': 16,
+            'rows': 2,
+        },
     },
 }
 
@@ -22,14 +30,6 @@ CONFIG = {
 @pytest.fixture(scope='module')
 def config():
     return CONFIG
-
-
-@pytest.fixture(scope='function')
-def mock_config(monkeypatch):
-    def load():
-        return CONFIG
-
-    monkeypatch.setattr(ConfigLoader, 'load', load)
 
 
 @pytest.fixture(scope='function')

@@ -9,7 +9,7 @@ tests: ## Run tests.
 	@pytest tests/ -x -vv
 
 quality: ## Check quality.
-	@flake8 transilienwatcher/
+	@flake8
 	@bandit -r transilienwatcher/
 
 coverage: ## Run tests with coverage.
@@ -17,3 +17,5 @@ coverage: ## Run tests with coverage.
 
 coverage-html: ## Run tests with html output coverage.
 	@pytest tests/ --cov=transilienwatcher --cov-report html
+
+ci: quality coverage ## Run CI.

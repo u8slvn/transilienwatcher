@@ -1,19 +1,23 @@
 import pytest
 
-from transilienwatcher.display import (LCD, Console, DisplayBuilder,
+from transilienwatcher.display import (Console, DisplayBuilder, LCD,
                                        UnknownDisplayTypeError)
 
 
 class TestLCDDisplay:
     def test_print_on_lcd(self, mocker):
-        charlcd = mocker.patch('transilienwatcher.display.CharLCD')
-        messages = ['foo']
-        lcd = LCD()
+        digital_in_out = mocker.patch('transilienwatcher.display.DigitalInOut')
+        char_lcd = mocker.patch('transilienwatcher.display.Character_LCD_Mono')
+        messages = ['foo', 'bar']
+        lcd = LCD(columns=16, rows=2)
 
         lcd.print(messages)
 
-        assert (1, 0) == charlcd().cursor_pos
-        charlcd().write_string.assert_called_once_with('foo')
+        assert 7 == digital_in_out.call_count
+        char_lcd.assert_called_once()
+        assert char_lcd().backlight is True
+        char_lcd().clear.assert_called_once()
+        assert char_lcd().message == 'foo\nbar'
 
 
 class TestConsoleDisplay:
@@ -34,7 +38,8 @@ class TestDisplayFactory:
         assert isinstance(display, Console)
 
     def test_display_builder_lcd(self, mocker, config):
-        mocker.patch('transilienwatcher.display.CharLCD')
+        mocker.patch('transilienwatcher.display.DigitalInOut')
+        mocker.patch('transilienwatcher.display.Character_LCD_Mono')
         config['display']['type'] = 'lcd'
 
         display = DisplayBuilder.build(config['display'])
