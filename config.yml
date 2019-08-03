@@ -1,15 +1,13 @@
 transilien:
   stations:
-    departure: 00000000
-    arrival: 00000000
+    departure: '00000000'
+    arrival: '00000000'
   credentials:
-    username: username
-    password: password
-
+    username: 'username'
+    password: 'password'
 refresh_time: 10
-
 display:
-  type: lcd
-  lcd-config:
+  type: 'lcd'
+  lcd:
     columns: 16
     rows: 2

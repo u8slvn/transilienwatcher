@@ -7,6 +7,6 @@ settings.ini
 .coverage
 htmlcov/
 \~/
-settings.env
+*.env
 log
 test_pid

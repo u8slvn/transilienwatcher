@@ -25,7 +25,7 @@ CONFIG = {
     'refresh_time': 10,
     'display': {
         'type': 'console',
-        'lcd-config': {
+        'lcd': {
             'columns': 16,
             'rows': 2,
         },

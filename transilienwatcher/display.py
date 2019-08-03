@@ -47,7 +47,7 @@ class DisplayBuilder(ABC):
     @staticmethod
     def build(config: dict):
         display = {
-            'lcd': lambda: LCD(**config['lcd-config']),
+            'lcd': lambda: LCD(**config['lcd']),
             'console': lambda: Console(),
         }.get(config['type'])
 
