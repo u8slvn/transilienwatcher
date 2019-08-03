@@ -2,7 +2,6 @@
 # coding: utf-8
 import argparse
 import os
-import tempfile
 
 from loguru import logger
 
@@ -10,12 +9,10 @@ from transilienwatcher import TransilienWatcher
 
 base_dir = os.path.dirname(__file__)
 
-log_success = f'{base_dir}/../log/transilienwatcher.success.log'
-log_error = f'{base_dir}/../log/transilienwatcher.error.log'
+log_file = f'{base_dir}/../log/transilienwatcher.log'
 
 logger.remove()  # Reset default loguru logger.
-logger.add(log_success, rotation='00:00', retention='2 days', level='DEBUG')
-logger.add(log_error, rotation='00:00', retention='2 days', level='ERROR')
+logger.add(log_file, rotation='00:00', retention='2 days', level='DEBUG')
 
 
 def parse_operation():
@@ -26,12 +23,7 @@ def parse_operation():
     return args.operation
 
 
-pid_path = os.path.join(tempfile.gettempdir(), 'transilienwatcher.pid')
-daemon = TransilienWatcher(
-    pidfile=pid_path,
-    stdout=log_success,
-    stderr=log_error
-)
+daemon = TransilienWatcher(log_file=log_file)
 
 operation = parse_operation()
 operation = getattr(daemon, operation)

@@ -1,3 +1,5 @@
+import os
+import tempfile
 import time
 
 from loguru import logger
@@ -9,9 +11,15 @@ from transilienwatcher.transilien import Transilien
 
 
 class TransilienWatcher(Daemon):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, log_file: str):
+        pidfile = os.path.join(tempfile.gettempdir(), 'transilienwatcher.pid')
         app_name = self.__class__.__name__
-        super().__init__(app_name=app_name, *args, **kwargs)
+        super().__init__(
+            pidfile=pidfile,
+            app_name=app_name,
+            stderr=log_file,
+            stdout=log_file
+        )
 
         config = ConfigLoader.load()
         display = DisplayBuilder.build(config['display'])
