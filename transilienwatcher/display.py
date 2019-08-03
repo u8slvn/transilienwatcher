@@ -10,18 +10,18 @@ class UnknownDisplayTypeError(NotImplementedError):
 
 class Display(ABC):
     @abstractmethod
-    def print(self, messages):
+    def print(self, messages: list):
         raise NotImplementedError
 
 
 class Console(Display):
-    def print(self, messages):
+    def print(self, messages: list):
         for message in messages:
             print(message)
 
 
 class LCD(Display):
-    def __init__(self, columns, rows):
+    def __init__(self, columns: int, rows: int):
         import board
 
         rs = DigitalInOut(board.D7)
@@ -38,7 +38,7 @@ class LCD(Display):
         )
         self._lcd.backlight = True
 
-    def print(self, messages):
+    def print(self, messages: list):
         self._lcd.clear()
         self._lcd.message = '\n'.join(messages)
 

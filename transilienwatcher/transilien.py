@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 
-import requests
-from loguru import logger
 from defusedxml import ElementTree as etree
+from loguru import logger
+import requests
 from requests.auth import HTTPBasicAuth
 
 from transilienwatcher import error_handlers

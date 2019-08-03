@@ -1,12 +1,12 @@
 from unittest.mock import sentinel
 
-import pytest
 from freezegun import freeze_time
+import pytest
 from requests import HTTPError, RequestException
 from requests.auth import HTTPBasicAuth
 
-from transilienwatcher.exceptions import RequestError, FormatError
-from transilienwatcher.transilien import Requester, Formatter, Transilien
+from transilienwatcher.exceptions import FormatError, RequestError
+from transilienwatcher.transilien import Formatter, Requester, Transilien
 
 
 class TestRequester:
@@ -119,7 +119,7 @@ class TestTransilien:
         assert result == sentinel.data
         formatter.assert_called_once_with(data=sentinel.raw_data)
 
-    def test_fetch_data_fails_on_request(self, mocker, config):
+    def test_fetch_data_fails_on_http_result(self, mocker, config):
         mocker.patch(
             'transilienwatcher.transilien.requests.get',
             side_effect=RequestException
@@ -131,7 +131,22 @@ class TestTransilien:
 
         result = transilien.fetch_data()
 
-        assert ["HTTP: unknown error"] == result
+        assert ["ERROR: http"] == result
+        formatter.assert_not_called()
+
+    def test_fetch_data_fails_on_request(self, mocker, config):
+        mocker.patch(
+            'transilienwatcher.transilien.requests.get',
+            side_effect=Exception
+        )
+        formatter = mocker.patch(
+            'transilienwatcher.transilien.Formatter.format'
+        )
+        transilien = Transilien(config['transilien'])
+
+        result = transilien.fetch_data()
+
+        assert ["ERROR: api"] == result
         formatter.assert_not_called()
 
     def test_fetch_data_fails_on_format(self, mocker, config):
@@ -147,7 +162,7 @@ class TestTransilien:
 
         result = transilien.fetch_data()
 
-        assert ["FORMAT: unknown error"] == result
+        assert ["ERROR: format"] == result
 
     def test_fetch_data_fails(self, mocker, config):
         mocker.patch(

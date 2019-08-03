@@ -43,6 +43,7 @@ class _App:
         self.display = display
         self._refresh_time = config['refresh_time']
 
+    @logger.catch
     def start(self):
         self.is_running = True
 

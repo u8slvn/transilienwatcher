@@ -99,7 +99,6 @@ class ConfigLoader:
         config = dict(default_config)
         cls.update_config(config, cls._load_file(path))
         config.update(cls.overwrite_config_with_env(config))
-        print(config)
         if not config_validator.validate(config):
             raise ConfigError(f"Invalid configuration provided.\n"
                               f"{config_validator.errors}")

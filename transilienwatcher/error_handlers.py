@@ -1,7 +1,7 @@
 import functools
 
 from loguru import logger
-from requests import RequestException, ReadTimeout
+from requests import ReadTimeout, RequestException
 
 from transilienwatcher.exceptions import FormatError, RequestError, \
     TransilienError
@@ -12,9 +12,12 @@ def request_data(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except (RequestException, ReadTimeout):
-            logger.error("Request failed.")
-            raise RequestError("HTTP: unknown error")
+        except (RequestException, ReadTimeout) as error:
+            logger.error(f"Request failed.\n{error}")
+            raise RequestError("ERROR: http")
+        except Exception as error:
+            logger.error(f"Request failed.\n{error}")
+            raise RequestError("ERROR: api")
 
     return wrapper
 
@@ -24,9 +27,9 @@ def format_data(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except Exception:
-            logger.error("Format failed.")
-            raise FormatError("FORMAT: unknown error")
+        except Exception as error:
+            logger.error(f"Format failed.\n{error}")
+            raise FormatError("ERROR: format")
 
     return wrapper
 
