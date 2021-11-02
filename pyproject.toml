@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "transilienwatcher"
+version = "1.0.0"
+description = "Transilien (parisian public transport) timetables on LCD display."
+authors = ["u8slvn <u8slvn@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.26.0"
+defusedxml = "^0.7.1"
+adafruit-circuitpython-charlcd = "^3.3.10"
+PyYAML = "^6.0"
+loguru = "^0.5.3"
+Cerberus = "^1.3.4"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+pytest-cov = "^3.0.0"
+pytest-mock = "^3.6.1"
+freezegun = "^1.1.0"
+flake8 = "^4.0.1"
+bandit = "^1.7.0"
+
+[tool.poetry.extras]
+coverage = ["coverage"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

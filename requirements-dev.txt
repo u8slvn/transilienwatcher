@@ -1,8 +1,0 @@
--r requirements.txt
-pytest==5.0.1
-pytest-cov==2.7.1
-pytest-mock==1.10.4
-freezegun==0.2.3
-coverage==4.5.3
-flake8==3.7.7
-bandit==1.6.2
