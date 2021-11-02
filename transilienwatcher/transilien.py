@@ -12,10 +12,7 @@ from transilienwatcher.exceptions import RequestError
 class Requester:
     def __init__(self, url: str, username: str, password: str):
         self._url = url
-        self._auth = HTTPBasicAuth(
-            username=username,
-            password=password
-        )
+        self._auth = HTTPBasicAuth(username=username, password=password)
 
     @error_handlers.request_data
     def request(self):
@@ -30,8 +27,8 @@ class Requester:
 
 
 class Formatter:
-    encoding = 'utf-8'
-    date_format = '%d/%m/%Y %H:%M'
+    encoding = "utf-8"
+    date_format = "%d/%m/%Y %H:%M"
 
     @error_handlers.format_data
     def format(self, data: str, limit: int = 2):
@@ -39,15 +36,15 @@ class Formatter:
         logger.info(f"Formatting data {data or 'None'}.")
 
         tree = etree.fromstring(data)
-        trains = tree.findall('.//train')
+        trains = tree.findall(".//train")
 
         timetables = [self._format_train(train) for train in trains[:limit]]
         return timetables
 
     def _format_train(self, train):
-        miss = train.find('miss').text  # Mission code of the train.
-        date = train.find('date').text
-        status = train.find('etat')
+        miss = train.find("miss").text  # Mission code of the train.
+        date = train.find("date").text
+        status = train.find("etat")
 
         status = status if status is None else status.text
 
@@ -55,7 +52,7 @@ class Formatter:
         time_delta = date - datetime.now()
 
         time = self._format_timedelta(time_delta=time_delta)
-        timetable = f'{miss}: {status or time}'
+        timetable = f"{miss}: {status or time}"
         return timetable
 
     @staticmethod
@@ -67,11 +64,11 @@ class Formatter:
 
 
 class Transilien:
-    url = 'https://api.transilien.com/gare/{dep}/depart/{arr}'
+    url = "https://api.transilien.com/gare/{dep}/depart/{arr}"
 
     def __init__(self, config: dict):
-        url = self._build_url(**config['stations'])
-        self.requester = Requester(url=url, **config['credentials'])
+        url = self._build_url(**config["stations"])
+        self.requester = Requester(url=url, **config["credentials"])
         self.formatter = Formatter()
 
     @error_handlers.fetch_data
@@ -81,4 +78,4 @@ class Transilien:
         return data
 
     def _build_url(self, departure: str, arrival: str):
-        return self.url.format(dep=departure, arr=arrival if arrival else '')
+        return self.url.format(dep=departure, arr=arrival if arrival else "")

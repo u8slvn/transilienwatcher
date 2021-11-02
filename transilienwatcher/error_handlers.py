@@ -3,8 +3,11 @@ import functools
 from loguru import logger
 from requests import ReadTimeout, RequestException
 
-from transilienwatcher.exceptions import FormatError, RequestError, \
-    TransilienError
+from transilienwatcher.exceptions import (
+    FormatError,
+    RequestError,
+    TransilienError,
+)
 
 
 def request_data(func):

@@ -33,23 +33,30 @@ class LCD(Display):
         backlight = DigitalInOut(board.D13)
 
         self._lcd = Character_LCD_Mono(
-            rs=rs, en=en, db4=d4, db5=d5, db6=d6, db7=d7,
-            columns=columns, lines=rows, backlight_pin=backlight
+            rs=rs,
+            en=en,
+            db4=d4,
+            db5=d5,
+            db6=d6,
+            db7=d7,
+            columns=columns,
+            lines=rows,
+            backlight_pin=backlight,
         )
         self._lcd.backlight = True
 
     def print(self, messages: list):
         self._lcd.clear()
-        self._lcd.message = '\n'.join(messages)
+        self._lcd.message = "\n".join(messages)
 
 
 class DisplayBuilder(ABC):
     @staticmethod
     def build(config: dict):
         display = {
-            'lcd': lambda: LCD(**config['lcd']),
-            'console': lambda: Console(),
-        }.get(config['type'])
+            "lcd": lambda: LCD(**config["lcd"]),
+            "console": lambda: Console(),
+        }.get(config["type"])
 
         if not display:
             raise UnknownDisplayTypeError

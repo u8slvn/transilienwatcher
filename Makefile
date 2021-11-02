@@ -10,7 +10,11 @@ tests: ## Run tests.
 
 quality: ## Check quality.
 	@poetry run flake8
+	@poetry run black --check transilienwatcher/
 	@poetry run bandit -r transilienwatcher/
+
+format: ## Format files.
+	@poetry run black transilienwatcher/
 
 coverage: ## Run tests with coverage.
 	@poetry run pytest tests/ --cov=transilienwatcher

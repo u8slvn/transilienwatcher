@@ -6,13 +6,14 @@ from abc import ABC, abstractmethod
 
 
 class Daemon(ABC):
-    def __init__(self,
-                 pidfile: str,
-                 app_name: str,
-                 stdin: str = '/dev/null',
-                 stdout: str = '/dev/null',
-                 stderr: str = '/dev/null'
-                 ):
+    def __init__(
+        self,
+        pidfile: str,
+        app_name: str,
+        stdin: str = "/dev/null",
+        stdout: str = "/dev/null",
+        stderr: str = "/dev/null",
+    ):
         self.pidfile = pidfile
         self.app_name = app_name
         self.stdin = stdin
@@ -25,7 +26,7 @@ class Daemon(ABC):
 
         self.fork_os()
 
-        os.chdir('/')
+        os.chdir("/")
         os.umask(0)
         os.setsid()
 
@@ -34,14 +35,14 @@ class Daemon(ABC):
         sys.stdout.flush()
         sys.stderr.flush()
 
-        with open(self.stdin, 'rb') as f:
+        with open(self.stdin, "rb") as f:
             os.dup2(f.fileno(), sys.stdin.fileno())
-        with open(self.stdout, 'ab') as f:
+        with open(self.stdout, "ab") as f:
             os.dup2(f.fileno(), sys.stdout.fileno())
-        with open(self.stderr, 'ab') as f:
+        with open(self.stderr, "ab") as f:
             os.dup2(f.fileno(), sys.stderr.fileno())
 
-        with open(self.pidfile, 'w') as f:
+        with open(self.pidfile, "w") as f:
             print(os.getpid(), file=f)
 
         atexit.register(lambda: os.remove(self.pidfile))

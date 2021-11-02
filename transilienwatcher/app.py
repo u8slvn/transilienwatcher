@@ -12,18 +12,18 @@ from transilienwatcher.transilien import Transilien
 
 class TransilienWatcher(Daemon):
     def __init__(self, log_file: str):
-        pidfile = os.path.join(tempfile.gettempdir(), 'transilienwatcher.pid')
+        pidfile = os.path.join(tempfile.gettempdir(), "transilienwatcher.pid")
         app_name = self.__class__.__name__
         super().__init__(
             pidfile=pidfile,
             app_name=app_name,
             stderr=log_file,
-            stdout=log_file
+            stdout=log_file,
         )
 
         config = ConfigLoader.load()
-        display = DisplayBuilder.build(config['display'])
-        transilien = Transilien(config['transilien'])
+        display = DisplayBuilder.build(config["display"])
+        transilien = Transilien(config["transilien"])
 
         self._app = _App(
             config=config,
@@ -41,7 +41,7 @@ class _App:
         self.is_running = False
         self.transilien = transilien
         self.display = display
-        self._refresh_time = config['refresh_time']
+        self._refresh_time = config["refresh_time"]
 
     @logger.catch
     def start(self):
