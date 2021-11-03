@@ -32,7 +32,7 @@ class TransilienWatcher(Daemon):
         )
 
     def run(self):
-        logger.info("Starting RERWatcher app...")
+        logger.info("Starting TransilienWatcher app...")
         self._app.start()
 
 

@@ -130,3 +130,6 @@ dmypy.json
 
 # Pycharm
 .idea
+
+# Source env files
+*.env

@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
+from string import Template
 
+import requests
 from defusedxml import ElementTree as etree
 from loguru import logger
-import requests
 from requests.auth import HTTPBasicAuth
 
 from transilienwatcher import error_handlers
@@ -16,7 +17,7 @@ class Requester:
 
     @error_handlers.request_data
     def request(self):
-        logger.info(f"Fetching data from {self._url}.")
+        logger.debug(f"Fetching data from {self._url}.")
         response = requests.get(url=self._url, auth=self._auth)
 
         if response.status_code != 200:
@@ -33,7 +34,7 @@ class Formatter:
     @error_handlers.format_data
     def format(self, data: str, limit: int = 2):
         data = data.encode(self.encoding)
-        logger.info(f"Formatting data {data or 'None'}.")
+        logger.debug(f"Formatting data {data or 'None'}.")
 
         tree = etree.fromstring(data)
         trains = tree.findall(".//train")
@@ -64,7 +65,7 @@ class Formatter:
 
 
 class Transilien:
-    url = "https://api.transilien.com/gare/{dep}/depart/{arr}"
+    url = Template("https://api.transilien.com/gare/$dep/depart/$arr")
 
     def __init__(self, config: dict):
         url = self._build_url(**config["stations"])
@@ -78,4 +79,4 @@ class Transilien:
         return data
 
     def _build_url(self, departure: str, arrival: str):
-        return self.url.format(dep=departure, arr=arrival if arrival else "")
+        return self.url.substitute(dep=departure, arr=arrival or "")
