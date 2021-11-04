@@ -6,7 +6,7 @@ help: ## List all the command helps.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 tests: ## Run tests.
-	@poetry run pytest tests/ -x -vv
+	@poetry run pytest tests/ -x -vv --cache-clear
 
 quality: ## Check quality.
 	@poetry run flake8

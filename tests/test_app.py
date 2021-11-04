@@ -1,18 +1,9 @@
 import pytest
 
-from transilienwatcher.app import TransilienWatcher
-from transilienwatcher.configuration import ConfigLoader
+from transilienwatcher import TransilienWatcher
 
 
-@pytest.fixture(scope='function')
-def config_loader(monkeypatch, config):
-    def load(file: str):
-        return config
-
-    monkeypatch.setattr(ConfigLoader, 'load', load)
-
-
-def test_rerwatcher_workflow(mocker, config_loader, capsys):
+def test_rerwatcher_workflow(mocker, config, capsys):
     messages = [
         ['TEST: 1min', 'TEST: 1h'],
         ['TEST: 2min', 'TEST: 2h'],
@@ -26,7 +17,7 @@ def test_rerwatcher_workflow(mocker, config_loader, capsys):
         side_effect=messages
     )
 
-    app = TransilienWatcher(None, config_file="config.py")
+    app = TransilienWatcher(log_file='', config=config)
     with pytest.raises(KeyboardInterrupt):
         app.run()
 

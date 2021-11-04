@@ -1,9 +1,11 @@
+import builtins
 import sys
+from pathlib import Path
 from unittest.mock import Mock
 
-from loguru import logger
 import pytest
 import requests
+from loguru import logger
 
 # Monkeypatch for non Raspberry pi environment.
 sys.modules['board'] = Mock()
@@ -56,3 +58,20 @@ def mock_requests(monkeypatch, requests_fixture):
         return requests_fixture
 
     monkeypatch.setattr(requests, 'get', get)
+
+
+@pytest.fixture
+def cleanup_files(monkeypatch):
+    def open_wrapper(open_func, files):
+        def open_patched(path, mode='r', *args, **kwargs):
+            if mode in ['w', 'x'] and not Path(path).is_file():
+                files.append(path)
+            return open_func(path, mode=mode, *args, **kwargs)
+
+        return open_patched
+
+    files = []
+    monkeypatch.setattr(builtins, 'open', open_wrapper(builtins.open, files))
+    yield
+    for file in files:
+        Path(file).unlink()

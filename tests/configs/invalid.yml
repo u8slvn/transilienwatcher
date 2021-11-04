@@ -1,0 +1,11 @@
+transilien:
+  stations:
+    test: '00000000'
+  credentials:
+    username: 898323
+refresh_time: 10
+display:
+  type: 'oled'
+  lcd:
+    columns: 'hello'
+    rows: 2

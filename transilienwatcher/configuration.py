@@ -3,9 +3,13 @@ import os
 import yaml
 from cerberus import Validator
 
-from transilienwatcher.exceptions import ConfigError
+from transilienwatcher.exceptions import (
+    ConfigError,
+    InvalidConfigError,
+    ConfigNotFoundError,
+)
 
-default_config = {
+DEFAULT_CONFIG = {
     "transilien": {
         "stations": {
             "departure": None,
@@ -13,6 +17,7 @@ default_config = {
         },
         "credentials": {
             "username": None,
+            "password": None,
         },
     },
     "refresh_time": 30,
@@ -93,26 +98,36 @@ config_schema = {
 config_validator = Validator(config_schema)
 
 
-class ConfigLoader:
+class ConfigManager:
     @classmethod
-    def load(cls, file: str):
-        config = dict(default_config)
+    def load(cls, file: str) -> dict:
+        config = dict(DEFAULT_CONFIG)
         cls.update_config(config, cls._load_file(file=file))
         config.update(cls.overwrite_config_with_env(config=config))
         if not config_validator.validate(config):
-            raise ConfigError(
+            raise InvalidConfigError(
                 f"Invalid configuration provided.\n {config_validator.errors}"
             )
         return config
 
     @staticmethod
-    def _load_file(file: str):
+    def _load_file(file: str) -> dict:
         try:
             with open(file, "r") as f:
                 config = yaml.safe_load(f)
         except FileNotFoundError as error:
-            raise ConfigError(f"Configuration file {file} not found.") from error
+            raise ConfigNotFoundError(
+                f"Configuration file {file} not found."
+            ) from error
         return config
+
+    @classmethod
+    def create(cls, file: str):
+        try:
+            with open(file, "x") as f:
+                f.write(yaml.dump(DEFAULT_CONFIG))
+        except FileExistsError as error:
+            raise ConfigError(f"Configuration file {file} already exists.") from error
 
     @classmethod
     def overwrite_config_with_env(cls, config: dict, _path=None):

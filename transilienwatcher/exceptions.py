@@ -12,3 +12,11 @@ class FormatError(TransilienError):
 
 class ConfigError(Exception):
     pass
+
+
+class InvalidConfigError(ConfigError):
+    pass
+
+
+class ConfigNotFoundError(ConfigError):
+    pass
