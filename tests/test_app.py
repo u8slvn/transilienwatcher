@@ -6,7 +6,7 @@ from transilienwatcher.configuration import ConfigLoader
 
 @pytest.fixture(scope='function')
 def config_loader(monkeypatch, config):
-    def load():
+    def load(file: str):
         return config
 
     monkeypatch.setattr(ConfigLoader, 'load', load)
@@ -26,7 +26,7 @@ def test_rerwatcher_workflow(mocker, config_loader, capsys):
         side_effect=messages
     )
 
-    app = TransilienWatcher(None)
+    app = TransilienWatcher(None, config_file="config.py")
     with pytest.raises(KeyboardInterrupt):
         app.run()
 

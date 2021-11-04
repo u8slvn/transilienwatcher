@@ -11,7 +11,7 @@ from transilienwatcher.transilien import Transilien
 
 
 class TransilienWatcher(Daemon):
-    def __init__(self, log_file: str):
+    def __init__(self, log_file: str, config_file: str):
         pidfile = os.path.join(tempfile.gettempdir(), "transilienwatcher.pid")
         app_name = self.__class__.__name__
         super().__init__(
@@ -21,7 +21,7 @@ class TransilienWatcher(Daemon):
             stdout=log_file,
         )
 
-        config = ConfigLoader.load()
+        config = ConfigLoader.load(file=config_file)
         display = DisplayBuilder.build(config["display"])
         transilien = Transilien(config["transilien"])
 

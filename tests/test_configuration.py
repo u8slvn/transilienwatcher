@@ -7,7 +7,7 @@ from transilienwatcher.exceptions import ConfigError
 
 
 def test_load_config_success():
-    config = ConfigLoader.load()
+    config = ConfigLoader.load(file="config.yml")
 
     assert 'transilien' in config
     assert 'refresh_time' in config
@@ -16,7 +16,7 @@ def test_load_config_success():
 
 def test_load_config_fails():
     with pytest.raises(ConfigError):
-        ConfigLoader.load('no-config.yml')
+        ConfigLoader.load(file='no-config.yml')
 
 
 def test_overwrite_config_with_env(mocker):

@@ -1,7 +1,7 @@
 import os
 
-from cerberus import Validator
 import yaml
+from cerberus import Validator
 
 from transilienwatcher.exceptions import ConfigError
 
@@ -95,10 +95,10 @@ config_validator = Validator(config_schema)
 
 class ConfigLoader:
     @classmethod
-    def load(cls, path: str = "config.yml"):
+    def load(cls, file: str):
         config = dict(default_config)
-        cls.update_config(config, cls._load_file(path))
-        config.update(cls.overwrite_config_with_env(config))
+        cls.update_config(config, cls._load_file(file=file))
+        config.update(cls.overwrite_config_with_env(config=config))
         if not config_validator.validate(config):
             raise ConfigError(
                 f"Invalid configuration provided.\n {config_validator.errors}"
@@ -106,11 +106,12 @@ class ConfigLoader:
         return config
 
     @staticmethod
-    def _load_file(path: str):
-        if not os.path.exists(path):
-            raise ConfigError(f"Configuration file {path} not found.")
-        with open(path, "r") as f:
-            config = yaml.safe_load(f)
+    def _load_file(file: str):
+        try:
+            with open(file, "r") as f:
+                config = yaml.safe_load(f)
+        except FileNotFoundError as error:
+            raise ConfigError(f"Configuration file {file} not found.") from error
         return config
 
     @classmethod
