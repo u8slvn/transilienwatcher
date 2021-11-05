@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
+from adafruit_character_lcd.character_lcd_i2c import Character_LCD_I2C
 from digitalio import DigitalInOut
 
 
@@ -50,10 +51,29 @@ class LCD(Display):
         self._lcd.message = "\n".join(messages)
 
 
+class LCDI2C(Display):
+    def __init__(self, columns: int, rows: int):
+        import board
+
+        i2c = board.I2C()
+
+        self._lcd = Character_LCD_I2C(
+            i2c=i2c,
+            columns=columns,
+            lines=rows,
+        )
+        self._lcd.backlight = True
+
+    def print(self, messages: list):
+        self._lcd.clear()
+        self._lcd.message = "\n".join(messages)
+
+
 class DisplayBuilder(ABC):
     @staticmethod
     def build(config: dict):
         display = {
+            "lcd_i2c": lambda: LCDI2C(**config["lcd"]),
             "lcd": lambda: LCD(**config["lcd"]),
             "console": lambda: Console(),
         }.get(config["type"])

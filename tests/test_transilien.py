@@ -11,46 +11,36 @@ from transilienwatcher.transilien import Formatter, Requester, Transilien
 
 class TestRequester:
     def test_request_success(self, mocker, config):
-        config = config['transilien']['credentials']
+        config = config["transilien"]["credentials"]
         response = mocker.Mock()
         response.status_code = 200
-        response.text = 'foo'
+        response.text = "foo"
         requests = mocker.patch(
-            'transilienwatcher.transilien.requests.get',
-            return_value=response
+            "transilienwatcher.transilien.requests.get", return_value=response
         )
-        requester = Requester(url='test.url', **config)
+        requester = Requester(url="test.url", **config)
 
         result = requester.request()
 
-        auth = HTTPBasicAuth(
-            username=config['username'],
-            password=config['password']
-        )
-        requests.assert_called_once_with(url='test.url', auth=auth)
-        assert 'foo' == result
+        auth = HTTPBasicAuth(username=config["username"], password=config["password"])
+        requests.assert_called_once_with(url="test.url", auth=auth)
+        assert "foo" == result
 
     def test_request_fails_if_response_is_not_200(self, mocker, config):
-        config = config['transilien']['credentials']
+        config = config["transilien"]["credentials"]
         response = mocker.Mock()
         response.status_code = 403
-        mocker.patch(
-            'transilienwatcher.transilien.requests.get',
-            return_value=response
-        )
-        requester = Requester(url='test.url', **config)
+        mocker.patch("transilienwatcher.transilien.requests.get", return_value=response)
+        requester = Requester(url="test.url", **config)
 
         with pytest.raises(RequestError):
             requester.request()
 
-    @pytest.mark.parametrize('exception', [HTTPError, RequestException])
+    @pytest.mark.parametrize("exception", [HTTPError, RequestException])
     def test_request_fails(self, mocker, config, exception):
-        config = config['transilien']['credentials']
-        mocker.patch(
-            'transilienwatcher.transilien.requests.get',
-            side_effect=exception
-        )
-        requester = Requester(url='test.url', **config)
+        config = config["transilien"]["credentials"]
+        mocker.patch("transilienwatcher.transilien.requests.get", side_effect=exception)
+        requester = Requester(url="test.url", **config)
 
         with pytest.raises(RequestError):
             requester.request()
@@ -63,7 +53,7 @@ class TestFormatter:
 
         result = formatter.format(requests_fixture)
 
-        assert ['DACA: 6min', 'FACA: 3h36'] == result
+        assert ["DACA: 6min", "FACA: 3h36"] == result
 
     @freeze_time("27-10-2018 20:10")
     def test_format_with_status(self, requests_fixture_status):
@@ -71,12 +61,11 @@ class TestFormatter:
 
         result = formatter.format(requests_fixture_status)
 
-        assert ['DACA: Retardé', 'FACA: Supprimé'] == result
+        assert ["DACA: Retardé", "FACA: Supprimé"] == result
 
     def test_format_fails(self, mocker):
         mocker.patch(
-            'transilienwatcher.transilien.etree.fromstring',
-            side_effect=Exception
+            "transilienwatcher.transilien.etree.fromstring", side_effect=Exception
         )
         formatter = Formatter()
 
@@ -85,34 +74,34 @@ class TestFormatter:
 
 
 class TestTransilien:
-    @pytest.mark.parametrize('arrival, expected_url', [
-        ('000001', 'https://api.transilien.com/gare/00000000/depart/000001'),
-        (None, 'https://api.transilien.com/gare/00000000/depart/'),
-    ])
+    @pytest.mark.parametrize(
+        "arrival, expected_url",
+        [
+            ("000001", "https://api.transilien.com/gare/00000000/depart/000001"),
+            (None, "https://api.transilien.com/gare/00000000/depart/"),
+        ],
+    )
     def test_init(self, mocker, config, arrival, expected_url):
-        requester = mocker.patch('transilienwatcher.transilien.Requester')
-        formatter = mocker.patch('transilienwatcher.transilien.Formatter')
-        config['transilien']['stations']['arrival'] = arrival
+        requester = mocker.patch("transilienwatcher.transilien.Requester")
+        formatter = mocker.patch("transilienwatcher.transilien.Formatter")
+        config["transilien"]["stations"]["arrival"] = arrival
 
-        _ = Transilien(config['transilien'])
+        _ = Transilien(config["transilien"])
 
         requester.assert_called_once_with(
-            url=expected_url,
-            username='username',
-            password='password'
+            url=expected_url, username="username", password="password"
         )
         formatter.assert_called_once()
 
     def test_fetch_data_success(self, mocker, config):
         mocker.patch(
-            'transilienwatcher.transilien.Requester.request',
-            return_value=sentinel.raw_data
+            "transilienwatcher.transilien.Requester.request",
+            return_value=sentinel.raw_data,
         )
         formatter = mocker.patch(
-            'transilienwatcher.transilien.Formatter.format',
-            return_value=sentinel.data
+            "transilienwatcher.transilien.Formatter.format", return_value=sentinel.data
         )
-        transilien = Transilien(config['transilien'])
+        transilien = Transilien(config["transilien"])
 
         result = transilien.fetch_data()
 
@@ -121,13 +110,10 @@ class TestTransilien:
 
     def test_fetch_data_fails_on_http_result(self, mocker, config):
         mocker.patch(
-            'transilienwatcher.transilien.requests.get',
-            side_effect=RequestException
+            "transilienwatcher.transilien.requests.get", side_effect=RequestException
         )
-        formatter = mocker.patch(
-            'transilienwatcher.transilien.Formatter.format'
-        )
-        transilien = Transilien(config['transilien'])
+        formatter = mocker.patch("transilienwatcher.transilien.Formatter.format")
+        transilien = Transilien(config["transilien"])
 
         result = transilien.fetch_data()
 
@@ -135,14 +121,9 @@ class TestTransilien:
         formatter.assert_not_called()
 
     def test_fetch_data_fails_on_request(self, mocker, config):
-        mocker.patch(
-            'transilienwatcher.transilien.requests.get',
-            side_effect=Exception
-        )
-        formatter = mocker.patch(
-            'transilienwatcher.transilien.Formatter.format'
-        )
-        transilien = Transilien(config['transilien'])
+        mocker.patch("transilienwatcher.transilien.requests.get", side_effect=Exception)
+        formatter = mocker.patch("transilienwatcher.transilien.Formatter.format")
+        transilien = Transilien(config["transilien"])
 
         result = transilien.fetch_data()
 
@@ -151,14 +132,13 @@ class TestTransilien:
 
     def test_fetch_data_fails_on_format(self, mocker, config):
         mocker.patch(
-            'transilienwatcher.transilien.Requester.request',
-            return_value=sentinel.raw_data
+            "transilienwatcher.transilien.Requester.request",
+            return_value=sentinel.raw_data,
         )
         mocker.patch(
-            'transilienwatcher.transilien.etree.fromstring',
-            side_effect=Exception
+            "transilienwatcher.transilien.etree.fromstring", side_effect=Exception
         )
-        transilien = Transilien(config['transilien'])
+        transilien = Transilien(config["transilien"])
 
         result = transilien.fetch_data()
 
@@ -166,10 +146,9 @@ class TestTransilien:
 
     def test_fetch_data_fails(self, mocker, config):
         mocker.patch(
-            'transilienwatcher.transilien.Requester.request',
-            side_effect=Exception
+            "transilienwatcher.transilien.Requester.request", side_effect=Exception
         )
-        transilien = Transilien(config['transilien'])
+        transilien = Transilien(config["transilien"])
 
         with pytest.raises(Exception):
             transilien.fetch_data()

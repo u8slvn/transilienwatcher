@@ -59,7 +59,7 @@ display_schema = {
             "required": True,
             "type": "string",
             "oneof": [
-                {"dependencies": "lcd", "allowed": ["lcd"]},
+                {"dependencies": "lcd", "allowed": ["lcd", "lcd_i2c"]},
                 {"allowed": ["console"]},
             ],
         },
