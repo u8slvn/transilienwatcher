@@ -127,12 +127,63 @@ def test_lcd_size_schema(lcd_size, expected):
         (
             {
                 "display": {
+                    "type": "lcd",
+                    "lcd": {
+                        "columns": 16,
+                        "rows": 2,
+                        "address": 0x20,
+                    }
+                },
+            },
+            False,
+        ),
+        (
+            {
+                "display": {
                     "type": None,
                 },
             },
             False,
         ),
         ({"display": {}}, False),
+        (
+            {
+                "display": {
+                    "type": "lcd_i2c",
+                    "lcd_i2c": {
+                        "columns": 16,
+                        "rows": 2,
+                        "address": 0x27,
+                    }
+                },
+            },
+            True,
+        ),
+        (
+            {
+                "display": {
+                    "type": "lcd_i2c",
+                    "lcd_i2c": {
+                        "columns": 16,
+                        "rows": 2,
+                    }
+                },
+            },
+            False,
+        ),
+        (
+            {
+                "display": {
+                    "type": "lcd_i2c",
+                    "lcd": {
+                        "columns": 16,
+                        "rows": 2,
+                        "address": 0x27,
+                    }
+                },
+            },
+            False,
+        ),
     ],
 )
 def test_display_schema(display, expected):

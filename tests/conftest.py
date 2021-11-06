@@ -30,6 +30,11 @@ CONFIG = {
             "columns": 16,
             "rows": 2,
         },
+        "lcd_i2c": {
+            "columns": 16,
+            "rows": 2,
+            "address": 0x20,
+        },
     },
 }
 

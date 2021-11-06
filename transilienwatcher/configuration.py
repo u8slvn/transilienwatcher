@@ -23,9 +23,10 @@ DEFAULT_CONFIG = {
     "refresh_time": 30,
     "display": {
         "type": None,
-        "lcd": {
+        "lcd_i2c": {
             "columns": 16,
             "rows": 2,
+            "address": 0x27,
         },
     },
 }
@@ -52,6 +53,11 @@ lcd_size_schema = {
     "nullable": False,
     "type": "integer",
 }
+lcd_i2c_address_schema = {
+    "required": True,
+    "nullable": False,
+    "type": "integer",
+}
 display_schema = {
     "type": "dict",
     "schema": {
@@ -59,7 +65,8 @@ display_schema = {
             "required": True,
             "type": "string",
             "oneof": [
-                {"dependencies": "lcd", "allowed": ["lcd", "lcd_i2c"]},
+                {"dependencies": "lcd", "allowed": ["lcd"]},
+                {"dependencies": "lcd_i2c", "allowed": ["lcd_i2c"]},
                 {"allowed": ["console"]},
             ],
         },
@@ -68,6 +75,14 @@ display_schema = {
             "schema": {
                 "columns": lcd_size_schema,
                 "rows": lcd_size_schema,
+            },
+        },
+        "lcd_i2c": {
+            "required": False,
+            "schema": {
+                "columns": lcd_size_schema,
+                "rows": lcd_size_schema,
+                "address": lcd_i2c_address_schema,
             },
         },
     },

@@ -52,15 +52,13 @@ class LCD(Display):
 
 
 class LCDI2C(Display):
-    def __init__(self, columns: int, rows: int):
+    def __init__(self, columns: int, rows: int, address: int = 0x20):
         import board
 
         i2c = board.I2C()
 
         self._lcd = Character_LCD_I2C(
-            i2c=i2c,
-            columns=columns,
-            lines=rows,
+            i2c=i2c, columns=columns, lines=rows, address=address
         )
         self._lcd.backlight = True
 
@@ -73,7 +71,7 @@ class DisplayBuilder(ABC):
     @staticmethod
     def build(config: dict):
         display = {
-            "lcd_i2c": lambda: LCDI2C(**config["lcd"]),
+            "lcd_i2c": lambda: LCDI2C(**config["lcd_i2c"]),
             "lcd": lambda: LCD(**config["lcd"]),
             "console": lambda: Console(),
         }.get(config["type"])
