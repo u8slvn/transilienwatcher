@@ -51,20 +51,15 @@ class LCD(Display):
         self._lcd.message = "\n".join(messages)
 
 
-class LCDI2C(Display):
+class LCDI2C(LCD):
     def __init__(self, columns: int, rows: int, address: int = 0x20):
         import board
 
         i2c = board.I2C()
-
         self._lcd = Character_LCD_I2C(
             i2c=i2c, columns=columns, lines=rows, address=address
         )
         self._lcd.backlight = True
-
-    def print(self, messages: list):
-        self._lcd.clear()
-        self._lcd.message = "\n".join(messages)
 
 
 class DisplayBuilder(ABC):
