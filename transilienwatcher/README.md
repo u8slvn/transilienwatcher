@@ -26,7 +26,7 @@ After reboot:
 $ sudo raspi-config
 ```
 
-Select `3 Interface Options` > `I5 I2C` > `Yes` > `Ok` > `Finish` 
+Select `3 Interface Options` > `P5 I2C` > `Yes` > `Ok` > `Finish` 
 
 ## Install TransilienWatcher
 

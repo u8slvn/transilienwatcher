@@ -25,7 +25,7 @@ DEFAULT_CONFIG = {
         "type": None,
         "lcd_i2c": {
             "columns": 16,
-            "rows": 2,
+            "rows": 4,
             "address": 0x27,
         },
     },

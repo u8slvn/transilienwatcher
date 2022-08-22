@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<passages gare="87682104">
+    <train>
+        <date mode="R">28/03/2018 20:16</date>
+        <num>150106</num>
+        <miss>DACA</miss>
+        <term>87686006</term>
+    </train>
+    <train>
+        <date mode="R">28/03/2018 23:46</date>
+        <num>150108</num>
+        <miss>FACA</miss>
+        <term>87686006</term>
+    </train>
+    <train>
+        <date mode="R">28/03/2018 23:56</date>
+        <num>150110</num>
+        <miss>DACA</miss>
+        <term>87686006</term>
+    </train>
+    <train>
+        <date mode="R">28/03/2018 23:57</date>
+        <num>150112</num>
+        <miss>FACA</miss>
+        <term>87686006</term>
+    </train>
+    <train>
+        <date mode="R">29/03/2018 00:16</date>
+        <num>150114</num>
+        <miss>DACA</miss>
+        <term>87686006</term>
+    </train>
+</passages>

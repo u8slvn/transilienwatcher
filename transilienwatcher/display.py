@@ -1,9 +1,5 @@
 from abc import ABC, abstractmethod
 
-from adafruit_character_lcd.character_lcd import Character_LCD_Mono
-from adafruit_character_lcd.character_lcd_i2c import Character_LCD_I2C
-from digitalio import DigitalInOut
-
 
 class UnknownDisplayTypeError(NotImplementedError):
     pass
@@ -23,43 +19,33 @@ class Console(Display):
 
 class LCD(Display):
     def __init__(self, columns: int, rows: int):
-        import board
+        from RPLCD.gpio import CharLCD
+        from RPi import GPIO
 
-        rs = DigitalInOut(board.D7)
-        en = DigitalInOut(board.D8)
-        d4 = DigitalInOut(board.D9)
-        d5 = DigitalInOut(board.D10)
-        d6 = DigitalInOut(board.D11)
-        d7 = DigitalInOut(board.D12)
-        backlight = DigitalInOut(board.D13)
-
-        self._lcd = Character_LCD_Mono(
-            rs=rs,
-            en=en,
-            db4=d4,
-            db5=d5,
-            db6=d6,
-            db7=d7,
-            columns=columns,
-            lines=rows,
-            backlight_pin=backlight,
+        self._lcd = CharLCD(
+            pin_rs=15,
+            pin_rw=18,
+            pin_e=16,
+            pins_data=[21, 22, 23, 24],
+            numbering_mode=GPIO.BOARD,
         )
-        self._lcd.backlight = True
 
     def print(self, messages: list):
         self._lcd.clear()
-        self._lcd.message = "\n".join(messages)
+        self._lcd.write_string("\n".join(messages))
 
 
 class LCDI2C(LCD):
-    def __init__(self, columns: int, rows: int, address: int = 0x20):
-        import board
+    def __init__(self, columns: int, rows: int, address: int):
+        from RPLCD.i2c import CharLCD
 
-        i2c = board.I2C()
-        self._lcd = Character_LCD_I2C(
-            i2c=i2c, columns=columns, lines=rows, address=address
+        self._lcd = CharLCD(
+            i2c_expander="PCF8574",
+            cols=columns,
+            rows=4,
+            address=address,
+            backlight_enabled=True,
         )
-        self._lcd.backlight = True
 
 
 class DisplayBuilder(ABC):

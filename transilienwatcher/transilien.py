@@ -32,7 +32,7 @@ class Formatter:
     date_format = "%d/%m/%Y %H:%M"
 
     @error_handlers.format_data
-    def format(self, data: str, limit: int = 2):
+    def format(self, data: str, limit: int = 4):
         data = data.encode(self.encoding)
         logger.debug(f"Formatting data {data or 'None'}.")
 
